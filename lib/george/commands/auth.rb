@@ -15,17 +15,17 @@ module George
         @options = options
       end
 
-      def execute(o: $stdout)
+      def execute(out: $stdout)
         token = read_token
         unless TokenValidator.token_valid?(token)
-          return o.puts 'Specified token is invalid'
+          return out.puts 'Specified token is invalid'
         end
 
         unless TokenValidator.save_token(token)
-          return o.puts 'Failed to save token'
+          return out.puts 'Failed to save the token'
         end
 
-        o.puts 'Token saved'
+        out.puts 'Token saved'
       end
 
       private
