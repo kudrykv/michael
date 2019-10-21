@@ -48,7 +48,7 @@ class Configuration
   end
 
   def default_config_dir
-    "#{ENV['HOME']}/.config/kudrykv/ghcli"
+    "#{ENV['HOME']}/.config/kudrykv/george"
   end
 
   def default_filename
@@ -56,6 +56,6 @@ class Configuration
   end
 
   def mkdir_once
-    @mkdir_p ||= FileUtils.mkdir_p(config_dir)
+    @mkdir_once ||= FileUtils.mkdir_p(config_dir)
   end
 end
