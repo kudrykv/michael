@@ -20,6 +20,9 @@ module George
 
     map %w[--version -v] => :version
 
+    require_relative 'commands/repos'
+    register George::Commands::Repos, 'repos', 'repos [SUBCOMMAND]', 'Command description...'
+
     desc 'auth', 'Command description...'
     method_option :help, aliases: '-h', type: :boolean,
                          desc: 'Display usage information'
