@@ -1,10 +1,6 @@
 # frozen_string_literal: true
 
 require 'thor'
-require 'tty-prompt'
-
-require_relative 'models/github/token_validator'
-require_relative 'models/configuration'
 
 module George
   # Handle the application command line parsing
@@ -33,14 +29,8 @@ module George
         invoke :help, ['auth']
       else
         require_relative 'commands/auth'
-        George::Commands::Auth.new(prompt, TokenValidator.new, options).execute
+        George::Commands::Auth.new(options).execute
       end
-    end
-
-    private
-
-    def prompt
-      TTY::Prompt.new
     end
   end
 end
