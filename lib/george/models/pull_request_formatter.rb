@@ -3,6 +3,15 @@
 require 'pastel'
 
 class PullRequestFormatter
+  class << self
+    def pretty(reponame, prs)
+      [
+        pastel.bold(reponame + ':'),
+        prs.map { |pr| PullRequestFormatter.new(pr).pretty }.join("\n")
+      ].join("\n")
+    end
+  end
+
   def initialize(pr)
     @pastel = Pastel.new
     @pr = pr

@@ -4,6 +4,7 @@ require_relative '../../command'
 require_relative '../../models/github/pull_request'
 require_relative '../../models/guard'
 require_relative '../../models/pull_request_formatter'
+require_relative '../../models/repository_formatter'
 
 module George
   module Commands
@@ -20,13 +21,7 @@ module George
         def execute(out: $stdout)
           hsh = prs.search_many(repos)
 
-          fine_repos = hsh[:repos]
-                       .reject { |item| item[:prs].empty? }
-                       .map do |item|
-                         { repo: item[:repo], prs: process_prs(item[:prs]) }
-                       end
-
-          print_good_prs(out, fine_repos)
+          print_good_prs(out, repos_with_prs(hsh[:repos]))
           print_repos_w_no_prs(out, repos_no_prs(hsh[:repos]))
           print_broken_repos(out, hsh[:broken])
         end
@@ -39,14 +34,13 @@ module George
           list_all.select { |item| item[:prs].empty? }.map { |item| item[:repo] }
         end
 
-        def print_good_prs(out, list)
-          list = list.map do |rwpr|
-            [
-              pastel.bold(rwpr[:repo] + ':'),
-              rwpr[:prs].join("\n")
-            ].join("\n")
-          end
+        def repos_with_prs(list_all)
+          list_all
+            .reject { |item| item[:prs].empty? }
+            .map { |item| RepositoryFormatter.new(item[:repo], item[:prs]).pretty }
+        end
 
+        def print_good_prs(out, list)
           out.puts list.join("\n\n")
         end
 
@@ -59,10 +53,6 @@ module George
 
           list = list.map { |repo| pastel.on_red.black(repo) }
           out.puts "\nBad repos: #{list.join(', ')}"
-        end
-
-        def process_prs(list)
-          list.map { |pr| PullRequestFormatter.new(pr).pretty }
         end
       end
     end
