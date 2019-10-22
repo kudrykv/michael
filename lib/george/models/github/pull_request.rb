@@ -25,8 +25,8 @@ class PullRequest < OctokitInitializer
 
     threads = []
 
-    groups.map.each_with_index do |group, index|
-      threads << Thread.new(group, index) do |gr, i|
+    groups.each do |group|
+      threads << Thread.new(group) do |gr|
         gr.map do |org_repo|
           process_one(org_repo, hsh)
         end
@@ -35,6 +35,8 @@ class PullRequest < OctokitInitializer
 
     threads.map(&:join).map(&:value).flatten
   end
+
+  private
 
   def process_one(org_repo, hsh = {})
     list = search(org_repo, hsh)
@@ -54,4 +56,5 @@ class PullRequest < OctokitInitializer
       .pull_request_reviews(org_repo, pr_number)
       .map { |review| Review.new(review) }
   end
+
 end
