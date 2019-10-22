@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require_relative '../../command'
-require_relative 'token_validator'
+require_relative '../command'
+require_relative 'github/token_validator'
 
 class Guard < George::Command
   attr_reader :config

@@ -2,7 +2,7 @@
 
 require_relative '../../command'
 require_relative '../../models/github/pull_request'
-require_relative '../../models/github/guard'
+require_relative '../../models/guard'
 
 module George
   module Commands
@@ -19,30 +19,34 @@ module George
         end
 
         def execute(out: $stdout)
-          repos_wo_opened_prs = []
-          bad_repos = []
-          fine_repos = repos.map do |repo|
-            list = prs.search(repo)
-            unless list
-              bad_repos.push(repo)
-              next
-            end
+          hsh = get_prs(repos)
 
-            processed_prs = process_prs(repo, list)
-            if processed_prs.empty?
-              repos_wo_opened_prs.push(repo)
-              next
-            end
-
-            { repo: repo, prs: processed_prs }
+          bad_repos = hsh[:broken]
+          repos_wo_opened_prs = hsh[:prs]
+                                .select { |item| item[:prs].empty? }
+                                .map { |item| item[:repo] }
+          fine_repos = hsh[:prs].reject { |item| item[:prs].empty? }.map do |item|
+            { repo: item[:repo], prs: process_prs(item[:repo], item[:prs]) }
           end
 
-          print_good_prs(out, fine_repos.reject(&:nil?))
+          print_good_prs(out, fine_repos)
           print_repos_w_no_prs(out, repos_wo_opened_prs)
           print_broken_repos(out, bad_repos)
         end
 
         private
+
+        def get_prs(repos)
+          repos.each_with_object(prs: [], broken: []) do |repo, acc|
+            list = prs.search(repo)
+            unless list
+              acc[:broken].push(repo)
+              next
+            end
+
+            acc[:prs].push(repo: repo, prs: list)
+          end
+        end
 
         def print_good_prs(out, list)
           list = list.map do |rwpr|
@@ -161,10 +165,6 @@ module George
           return '' if labels.empty?
 
           pastel.bold.yellow("[#{labels.join(', ')}]")
-        end
-
-        def login(obj)
-          obj[:user][:login]
         end
 
         def dot_status
