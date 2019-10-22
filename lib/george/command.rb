@@ -88,6 +88,11 @@ module George
       TTY::Prompt.new(options)
     end
 
+    def pastel
+      require 'pastel'
+      Pastel.new
+    end
+
     # Get terminal screen properties
     #
     # @see http://www.rubydoc.info/gems/tty-screen

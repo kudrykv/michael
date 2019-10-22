@@ -6,6 +6,8 @@ require_relative 'octokit_initializer'
 class PullRequest < OctokitInitializer
   def search(org_repo, state: 'open')
     octokit.pull_requests org_repo, state: state
+  rescue StandardError
+    false
   end
 
   def pr(org_repo, pr_number)

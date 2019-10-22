@@ -1,15 +1,16 @@
 # frozen_string_literal: true
 
 require_relative '../../command'
-require_relative 'octokit_initializer'
+require_relative 'token_validator'
 
 class Guard < George::Command
-  attr_reader :octokit
+  attr_reader :config
 
   def initialize
-    token_valid = TokenValidator.token_valid? Configuration.fetch(:token)
-    abort 'Your token is invalid' if token_valid
+    @config = Configuration.new
 
-    @octokit = OctokitInitializer.new
+    token_valid = TokenValidator.token_valid?(config.fetch(:token))
+    abort 'Your token is invalid' unless token_valid
+
   end
 end
