@@ -20,7 +20,7 @@ class PullRequest < OctokitInitializer
     false
   end
 
-  def search_many(org_repo_list, state: 'open', with_statuses: true, with_reviews: true)
+  def search_many(org_repo_list, hsh = {})
     groups = org_repo_list.each_slice(org_repo_list.length / 5 + 1).to_a
 
     threads = []
@@ -28,7 +28,7 @@ class PullRequest < OctokitInitializer
     groups.map.each_with_index do |group, index|
       threads << Thread.new(group, index) do |gr, i|
         gr.map do |org_repo|
-          process_one(org_repo, state: state, with_statuses: with_statuses, with_reviews: with_reviews)
+          process_one(org_repo, hsh)
         end
       end
     end
@@ -36,12 +36,8 @@ class PullRequest < OctokitInitializer
     threads.map(&:join).map(&:value).flatten
   end
 
-  def process_one(org_repo, state: 'open', with_statuses: true, with_reviews: true)
-    list = search(
-      org_repo, state: state,
-                with_statuses: with_statuses,
-                with_reviews: with_reviews
-    )
+  def process_one(org_repo, hsh = {})
+    list = search(org_repo, hsh)
 
     return { repo: org_repo, state: :failed } unless list
 
