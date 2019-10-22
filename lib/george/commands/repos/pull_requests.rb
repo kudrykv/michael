@@ -39,6 +39,7 @@ module George
 
           print_good_prs(out, fine_repos.reject(&:nil?))
           print_repos_w_no_prs(out, repos_wo_opened_prs)
+          print_broken_repos(out, bad_repos)
         end
 
         private
@@ -58,19 +59,33 @@ module George
           out.puts "\nRepos with no opened PRs: #{list.join(', ')}" if list.any?
         end
 
+        def print_broken_repos(out, list)
+          return if list.empty?
+
+          list = list.map { |repo| pastel.on_red.black(repo) }
+          out.puts "\nBad repos: #{list.join(', ')}"
+        end
+
         def process_prs(repo, list)
           list.map { |pr| process_single_pr(repo, pr) }
         end
 
         def process_single_pr(repo, pr)
-          reviewed_by = pr_review_statuses(prs.reviews(repo, pr[:number]))
-          statuses = prs.statuses(repo, pr[:head][:sha])[:statuses]
+          reviewed_by = pr_review_statuses(prs.reviews(repo, pr.number))
+          statuses = prs.statuses(repo, pr.head_sha)[:statuses]
 
           info_about_pr(pr, reviewed_by, statuses)
         end
 
         def info_about_pr(pr, reviews, statuses)
-          format('#%<number>s %<statuses_in_dots>s %<reviews_in_dots>s %<title>s %<postfix>s', number: pastel.bold(pr[:number]), statuses_in_dots: statuses_to_dots(statuses).join, reviews_in_dots: reviews_to_dots(pr, reviews).join, title: pr[:title], postfix: postfix_line_stringified(pr, reviews))
+          format(
+            '#%<number>s %<statuses_in_dots>s %<reviews_in_dots>s %<title>s %<postfix>s',
+            number: pastel.bold(pr.number),
+            statuses_in_dots: statuses_to_dots(statuses).join,
+            reviews_in_dots: reviews_to_dots(pr, reviews).join,
+            title: pr.title,
+            postfix: postfix_line_stringified(pr, reviews)
+          )
         end
 
         def statuses_to_dots(statuses)
@@ -78,29 +93,25 @@ module George
         end
 
         def reviews_to_dots(pr, reviews)
-          unless requested_or_received_review?(pr, reviews)
-            return [pastel.red('.')]
-          end
+          return [pastel.red('.')] unless pr.reviewed? || reviews.any?
           return [pastel.yellow('.')] if reviews.empty?
 
-          reviews.reject { |review| review[:login] == login(pr) }.map { |review| dot_status[review[:state].to_sym] }
-        end
-
-        def requested_or_received_review?(pr, reviews)
-          pr[:requested_reviewers].any? || pr[:requested_teams].any? || reviews.any?
+          reviews
+            .reject { |review| review.author == pr.author }
+            .map { |review| dot_status[review.state.to_sym] }
         end
 
         def postfix_line_stringified(pr, reviews)
           [
-            labels_stringified(labels(pr)),
-            pastel.cyan(login(pr)),
+            labels_stringified(pr.labels),
+            pastel.cyan(pr.author),
             who_req_changes_stringified(requested_changes(reviews)),
             who_commented_stringified(commented_on_pr(pr, reviews))
           ].reject(&:empty?).join(' ')
         end
 
         def requested_changes(reviews)
-          reviews.select { |review| review[:state] == 'CHANGES_REQUESTED' }.map { |review| review[:login] }
+          reviews.select(&:changes_requested?).map(&:author)
         end
 
         def who_commented_stringified(names)
@@ -117,27 +128,15 @@ module George
 
         def commented_on_pr(pr, reviews)
           reviews
-            .reject { |review| login(pr) == review[:login] }
-            .select { |review| review[:state] == 'COMMENTED' }
-            .map { |review| review[:login] }
+            .reject { |review| pr.author == review.author }
+            .select(&:commented?).map(&:author)
         end
 
         def pr_review_statuses(people_reviews)
-          sorted = people_reviews.sort_by { |review| login(review) }
+          sorted = people_reviews.sort_by(&:author)
 
-          by_user = group_reviews_by_user(sorted)
-
-          by_user = by_user.map do |reviews|
-            reviews.sort_by { |review| review[:submitted_at] }.reverse.first
-          end
-
-          by_user.map do |review|
-            { login: login(review), state: review[:state] }
-          end
-        end
-
-        def labels(pr)
-          pr[:labels]&.map { |label| label[:name] }
+          group_reviews_by_user(sorted)
+            .map { |reviews| reviews.sort_by(&:submitted_at).reverse.first }
         end
 
         def group_reviews_by_user(sorted_reviews)
@@ -148,7 +147,7 @@ module George
             end
 
             prev = acc.length - 1
-            if login(acc[prev][0]) == login(review)
+            if acc[prev][0].author == review.author
               acc[prev].push(review)
             else
               acc.push([review])
