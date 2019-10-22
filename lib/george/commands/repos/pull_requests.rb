@@ -14,7 +14,9 @@ module George
           super()
 
           @prs = PullRequest.new
-          @repos = config.fetch(:repos)
+          @repos = repos_config.fetch(:repos)
+          abort 'No repositories configured' if @repos.nil? || @repos.empty?
+
           @options = options
         end
 
