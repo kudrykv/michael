@@ -10,7 +10,7 @@ class Review
   end
 
   def state
-    review[:state]
+    review[:state].to_sym
   end
 
   def submitted_at

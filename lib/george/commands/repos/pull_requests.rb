@@ -19,34 +19,21 @@ module George
         end
 
         def execute(out: $stdout)
-          hsh = get_prs(repos)
+          hsh = prs.search_many(repos)
 
-          bad_repos = hsh[:broken]
-          repos_wo_opened_prs = hsh[:prs]
+          repos_wo_opened_prs = hsh[:repos]
                                 .select { |item| item[:prs].empty? }
                                 .map { |item| item[:repo] }
-          fine_repos = hsh[:prs].reject { |item| item[:prs].empty? }.map do |item|
+          fine_repos = hsh[:repos].reject { |item| item[:prs].empty? }.map do |item|
             { repo: item[:repo], prs: process_prs(item[:repo], item[:prs]) }
           end
 
           print_good_prs(out, fine_repos)
           print_repos_w_no_prs(out, repos_wo_opened_prs)
-          print_broken_repos(out, bad_repos)
+          print_broken_repos(out, hsh[:broken])
         end
 
         private
-
-        def get_prs(repos)
-          repos.each_with_object(prs: [], broken: []) do |repo, acc|
-            list = prs.search(repo)
-            unless list
-              acc[:broken].push(repo)
-              next
-            end
-
-            acc[:prs].push(repo: repo, prs: list)
-          end
-        end
 
         def print_good_prs(out, list)
           list = list.map do |rwpr|
@@ -76,7 +63,7 @@ module George
 
         def process_single_pr(repo, pr)
           reviewed_by = pr_review_statuses(prs.reviews(repo, pr.number))
-          statuses = prs.statuses(repo, pr.head_sha)[:statuses]
+          statuses = prs.statuses(repo, pr.head_sha)
 
           info_about_pr(pr, reviewed_by, statuses)
         end
@@ -93,7 +80,7 @@ module George
         end
 
         def statuses_to_dots(statuses)
-          statuses.map { |status| dot_status[status[:state].to_sym] }
+          statuses.map { |status| dot_status[status.state] }
         end
 
         def reviews_to_dots(pr, reviews)
@@ -102,7 +89,7 @@ module George
 
           reviews
             .reject { |review| review.author == pr.author }
-            .map { |review| dot_status[review.state.to_sym] }
+            .map { |review| dot_status[review.state] }
         end
 
         def postfix_line_stringified(pr, reviews)
