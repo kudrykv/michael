@@ -8,6 +8,18 @@ module George
 
       namespace :repos
 
+      desc 'edit', 'Command description...'
+      method_option :help, aliases: '-h', type: :boolean,
+                           desc: 'Display usage information'
+      def edit(*)
+        if options[:help]
+          invoke :help, ['edit']
+        else
+          require_relative 'repos/edit'
+          George::Commands::Repos::Edit.new(options).execute
+        end
+      end
+
       desc 'prs', 'Command description...'
       method_option :help, aliases: '-h', type: :boolean,
                            desc: 'Display usage information'

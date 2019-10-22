@@ -7,8 +7,6 @@ require 'tty-config'
 class Configuration
   CONFIG_ALLOWED_SYMBOLS = %i[set append fetch remove].freeze
 
-  attr_reader :config_dir, :config_name, :config
-
   def initialize(
     config_dir: default_config_dir, config_name: default_filename
   )
@@ -20,6 +18,10 @@ class Configuration
   def nuke
     create_config.write(force: true)
     self
+  end
+
+  def config_file_path
+    config_dir + '/' + config_name + '.yml'
   end
 
   def respond_to_missing?(symbol)
@@ -38,6 +40,8 @@ class Configuration
   end
 
   private
+
+  attr_reader :config_dir, :config_name, :config
 
   def create_config
     config = TTY::Config.new
