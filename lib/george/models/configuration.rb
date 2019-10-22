@@ -10,7 +10,7 @@ class Configuration
   attr_reader :config_dir, :config_name, :config
 
   def initialize(
-    config_dir = default_config_dir, config_name = default_filename
+    config_dir: default_config_dir, config_name: default_filename
   )
     @config_dir = config_dir
     @config_name = config_name
