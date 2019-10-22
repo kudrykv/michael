@@ -15,8 +15,8 @@ module George
         if options[:help]
           invoke :help, ['prs']
         else
-          require_relative 'repos/prs'
-          George::Commands::Repos::Prs.new(options).execute
+          require_relative 'repos/pull_requests'
+          George::Commands::Repos::PullRequests.new(options).execute
         end
       end
     end

@@ -7,7 +7,7 @@ require_relative '../../models/github/guard'
 module George
   module Commands
     class Repos
-      class Prs < Guard
+      class PullRequests < Guard
         attr_reader :prs, :options, :repos
 
         def initialize(options)
