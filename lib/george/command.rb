@@ -58,6 +58,11 @@ module George
       TTY::File
     end
 
+    def spinner(*args)
+      require 'tty-spinner'
+      TTY::Spinner.new(*args)
+    end
+
     # Terminal output paging
     #
     # @see http://www.rubydoc.info/gems/tty-pager

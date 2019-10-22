@@ -5,7 +5,6 @@ require 'thor'
 module George
   module Commands
     class Repos < Thor
-
       namespace :repos
 
       desc 'edit', 'Command description...'
@@ -27,8 +26,12 @@ module George
         if options[:help]
           invoke :help, ['prs']
         else
+          begin
           require_relative 'repos/pull_requests'
           George::Commands::Repos::PullRequests.new(options).execute
+          rescue
+            abort 'interrupted'
+          end
         end
       end
     end
