@@ -8,15 +8,26 @@ require_relative 'review'
 require_relative 'status'
 
 class PullRequest < OctokitInitializer
-  def search(org_repo, state: 'open')
-    octokit.pull_requests(org_repo, state: state).map { |pr| PRWrapper.new(pr) }
-  rescue StandardError
+  def search(org_repo, state: 'open', with_statuses: true, with_reviews: true)
+    octokit.pull_requests(org_repo, state: state).map do |pr|
+      pr = PRWrapper.new(pr)
+      pr.statuses = statuses(org_repo, pr.head_sha) if with_statuses
+      pr.reviews = reviews(org_repo, pr.number) if with_reviews
+
+      pr
+    end
+  rescue Octokit::InvalidRepository
     false
   end
 
-  def search_many(org_repo_list, state: 'open')
+  def search_many(org_repo_list, state: 'open', with_statuses: true, with_reviews: true)
     org_repo_list.each_with_object(repos: [], broken: []) do |org_repo, acc|
-      list = search(org_repo, state: state)
+      list = search(
+        org_repo, state: state,
+                  with_statuses: with_statuses,
+                  with_reviews: with_reviews
+      )
+
       unless list
         acc[:broken].push(org_repo)
         next
@@ -24,10 +35,6 @@ class PullRequest < OctokitInitializer
 
       acc[:repos].push(repo: org_repo, prs: list)
     end
-  end
-
-  def pr(org_repo, pr_number)
-    PRWrapper.new octokit.pull_request(org_repo, pr_number)
   end
 
   def statuses(org_repo, ref)
