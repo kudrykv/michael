@@ -21,20 +21,21 @@ class PullRequest < OctokitInitializer
   end
 
   def search_many(org_repo_list, state: 'open', with_statuses: true, with_reviews: true)
-    org_repo_list.each_with_object(repos: [], broken: []) do |org_repo, acc|
-      list = search(
-        org_repo, state: state,
-        with_statuses: with_statuses,
-        with_reviews: with_reviews
-      )
-
-      unless list
-        acc[:broken].push(org_repo)
-        next
-      end
-
-      acc[:repos].push(repo: org_repo, prs: list)
+    org_repo_list.map do |org_repo|
+      process_one(org_repo, state: state, with_statuses: with_statuses, with_reviews: with_reviews)
     end
+  end
+
+  def process_one(org_repo, state: 'open', with_statuses: true, with_reviews: true)
+    list = search(
+      org_repo, state: state,
+                with_statuses: with_statuses,
+                with_reviews: with_reviews
+    )
+
+    return { repo: org_repo, state: :failed } unless list
+
+    { repo: org_repo, state: :success, prs: list }
   end
 
   def statuses(org_repo, ref)

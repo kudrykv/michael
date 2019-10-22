@@ -21,11 +21,11 @@ module George
         end
 
         def execute(out: $stdout)
-          hsh = prs.search_many(repos)
+          list = prs.search_many(repos)
 
-          print_good_prs(out, repos_with_prs(hsh[:repos]))
-          print_repos_w_no_prs(out, repos_no_prs(hsh[:repos]))
-          print_broken_repos(out, hsh[:broken])
+          print_good_prs(out, repos_with_prs(list))
+          print_repos_w_no_prs(out, repos_no_prs(list))
+          print_broken_repos(out, list.select{|item| item[:state] == :failed})
         end
 
         private
@@ -33,12 +33,14 @@ module George
         attr_reader :prs, :options, :repos
 
         def repos_no_prs(list_all)
-          list_all.select { |item| item[:prs].empty? }.map { |item| item[:repo] }
+          list_all
+            .select { |item| item[:state] == :success && item[:prs].empty? }
+            .map { |item| item[:repo] }
         end
 
         def repos_with_prs(list_all)
           list_all
-            .reject { |item| item[:prs].empty? }
+            .select { |item| item[:state] == :success && item[:prs].any? }
             .map { |item| RepositoryFormatter.new(item[:repo], item[:prs]).pretty }
         end
 
