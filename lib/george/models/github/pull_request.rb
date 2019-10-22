@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require 'octokit'
-require 'tty-spinner'
 
 require_relative 'octokit_initializer'
 require_relative 'pr_wrapper'
@@ -22,13 +21,7 @@ class PullRequest < OctokitInitializer
   end
 
   def search_many(org_repo_list, state: 'open', with_statuses: true, with_reviews: true)
-    spin = spinner('[:spinner] :title')
-    spin.update(title: 'get PRs...')
-    spin.spin
-    result = org_repo_list.each_with_object(repos: [], broken: []).with_index do |(org_repo, acc), i|
-      spin.update(title: "[#{i + 1}/#{org_repo_list.length}] inspecting #{org_repo}...")
-      spin.spin
-
+    org_repo_list.each_with_object(repos: [], broken: []) do |org_repo, acc|
       list = search(
         org_repo, state: state,
         with_statuses: with_statuses,
@@ -42,10 +35,6 @@ class PullRequest < OctokitInitializer
 
       acc[:repos].push(repo: org_repo, prs: list)
     end
-
-    spin.success('completed')
-
-    result
   end
 
   def statuses(org_repo, ref)
@@ -57,11 +46,5 @@ class PullRequest < OctokitInitializer
     octokit
       .pull_request_reviews(org_repo, pr_number)
       .map { |review| Review.new(review) }
-  end
-
-  private
-
-  def spinner(*args)
-    TTY::Spinner.new(*args)
   end
 end
