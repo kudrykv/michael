@@ -66,20 +66,20 @@ module George
         end
 
         def repos_with_prs(list)
-          list = reject_self(list) if options[:skip_self]
-          list = reject_approved(list) if options[:hide_approved]
+          list = skip_self(list) if options[:skip_self]
+          list = hide_approved_or_commented(list) if options[:hide_approved]
           list = select_repos_w_prs(list)
 
           list.map { |item| RepositoryFormatter.new(item[:repo], item[:prs]).pretty }
         end
 
-        def reject_self(list)
+        def skip_self(list)
           list.each do |item|
             item[:prs] = item[:prs].reject { |pr| pr.author == user.username }
           end
         end
 
-        def reject_approved(list)
+        def hide_approved_or_commented(list)
           list.each do |item|
             item[:prs] = item[:prs].reject do |pr|
               pr.reviews.all? { |review| review.approved? || review.commented? }
