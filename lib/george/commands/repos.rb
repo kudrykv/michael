@@ -22,10 +22,13 @@ module George
       desc 'prs', 'List open PRs'
       method_option :help, aliases: '-h', type: :boolean,
                            desc: 'Display usage information'
-      method_option :show_empty, aliases: '-e', type: :boolean, default: false,
+      method_option :show_empty, aliases: '-e', type: :boolean,
                                  desc: 'List watched repos that have no open PRs'
       method_option :skip_self, aliases: '-s', type: :boolean,
                                 desc: 'Skip PRs created by the current user'
+      method_option :hide_approved, aliases: '-p', type: :boolean,
+                                    desc: 'Hide PRs that are approved and have'\
+                                          ' no requests for changes'
       def prs(*)
         if options[:help]
           invoke :help, ['prs']

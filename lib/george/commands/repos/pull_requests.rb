@@ -22,7 +22,6 @@ module George
           abort 'No repositories configured' if @repos.nil? || @repos.empty?
 
           @options = options
-          puts options.inspect
         end
 
         def execute(out: $stdout)
@@ -67,17 +66,29 @@ module George
         end
 
         def repos_with_prs(list)
-          list = filter_self(list) if options[:skip_self]
-
-          list = list.select { |item| item[:state] == :success && item[:prs].any? }
+          list = reject_self(list) if options[:skip_self]
+          list = reject_approved(list) if options[:hide_approved]
+          list = select_repos_w_prs(list)
 
           list.map { |item| RepositoryFormatter.new(item[:repo], item[:prs]).pretty }
         end
 
-        def filter_self(list)
+        def reject_self(list)
           list.each do |item|
             item[:prs] = item[:prs].reject { |pr| pr.author == user.username }
           end
+        end
+
+        def reject_approved(list)
+          list.each do |item|
+            item[:prs] = item[:prs].reject do |pr|
+              pr.reviews.all? { |review| review.approved? || review.commented? }
+            end
+          end
+        end
+
+        def select_repos_w_prs(list)
+          list.select { |item| item[:state] == :success && item[:prs].any? }
         end
 
         def print_good_prs(out, list)

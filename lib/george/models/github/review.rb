@@ -17,6 +17,10 @@ class Review
     review[:submitted_at]
   end
 
+  def approved?
+    state == :APPROVED
+  end
+
   def changes_requested?
     state == :CHANGES_REQUESTED
   end
