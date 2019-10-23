@@ -24,6 +24,8 @@ module George
                            desc: 'Display usage information'
       method_option :show_empty, aliases: '-e', type: :boolean, default: false,
                                  desc: 'List watched repos that have no open PRs'
+      method_option :skip_self, aliases: '-s', type: :boolean,
+                                desc: 'Skip PRs created by the current user'
       def prs(*)
         if options[:help]
           invoke :help, ['prs']

@@ -7,6 +7,7 @@ require_relative '../../models/github/pull_request'
 require_relative '../../models/guard'
 require_relative '../../models/pull_request_formatter'
 require_relative '../../models/repository_formatter'
+require_relative '../../models/github/user'
 
 module George
   module Commands
@@ -16,10 +17,12 @@ module George
           super()
 
           @prs = PullRequest.new
+          @user = User.new
           @repos = repos_config.fetch(:repos)
           abort 'No repositories configured' if @repos.nil? || @repos.empty?
 
           @options = options
+          puts options.inspect
         end
 
         def execute(out: $stdout)
@@ -32,7 +35,7 @@ module George
 
         private
 
-        attr_reader :prs, :options, :repos
+        attr_reader :prs, :options, :repos, :user
 
         def get_repos_with_spinner(out)
           progress = 0
@@ -63,10 +66,18 @@ module George
             .map { |item| item[:repo] }
         end
 
-        def repos_with_prs(list_all)
-          list_all
-            .select { |item| item[:state] == :success && item[:prs].any? }
-            .map { |item| RepositoryFormatter.new(item[:repo], item[:prs]).pretty }
+        def repos_with_prs(list)
+          list = filter_self(list) if options[:skip_self]
+
+          list = list.select { |item| item[:state] == :success && item[:prs].any? }
+
+          list.map { |item| RepositoryFormatter.new(item[:repo], item[:prs]).pretty }
+        end
+
+        def filter_self(list)
+          list.each do |item|
+            item[:prs] = item[:prs].reject { |pr| pr.author == user.username }
+          end
         end
 
         def print_good_prs(out, list)
