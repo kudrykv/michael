@@ -30,7 +30,12 @@ module George
                                     desc: 'Hide PRs that are approved and have'\
                                           ' no requests for changes'
       method_option :needs_review, aliases: '-n', type: :boolean,
-                                   desc: 'Show only ones which do not have any reviews yet'
+                                   desc: 'Show only ones which do not have any '\
+                                         'reviews yet'
+      method_option :actionable, aliases: '-t', type: :boolean,
+                                 desc: 'List only actionable PRs. These are '\
+      'PRs which you did not review yet, or ones which were updated after '\
+      'your review'
       def prs(*)
         if options[:help]
           invoke :help, ['prs']

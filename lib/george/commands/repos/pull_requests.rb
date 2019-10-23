@@ -69,6 +69,7 @@ module George
           list = needs_review(list) if options[:needs_review]
           list = skip_self(list) if options[:skip_self]
           list = hide_approved_or_commented(list) if options[:hide_approved]
+          list = actionable(list) if options[:actionable]
           list = select_repos_w_prs(list)
 
           list.map { |item| RepositoryFormatter.new(item[:repo], item[:prs]).pretty }
@@ -96,6 +97,17 @@ module George
           list.each do |item|
             item[:prs] = item[:prs].reject do |pr|
               pr.reviews.any?
+            end
+          end
+        end
+
+        def actionable(list)
+          list.each do |item|
+            item[:prs] = item[:prs].reject do |pr|
+              reviewed = pr.reviews.any? { |review| review.author == user.username }
+              new_changes = pr.last_update_head?
+
+              reviewed && !new_changes
             end
           end
         end
