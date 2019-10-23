@@ -80,7 +80,7 @@ module George
         def print_broken_repos(out, list)
           return if list.empty?
 
-          list = list.map { |repo| pastel.on_red.black(repo) }
+          list = list.map { |repo| pastel.on_red.black(repo[:repo]) }
           out.puts "\nBad repos: #{list.join(', ')}"
         end
       end

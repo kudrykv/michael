@@ -39,6 +39,8 @@ class PullRequest < OctokitInitializer
     octokit
       .pull_request_reviews(org_repo, pr_number)
       .map { |review| Review.new(review) }
+      .group_by(&:author).to_a
+      .map { |_author, reviews| reviews.sort_by(&:submitted_at).pop }
   end
 
 end
