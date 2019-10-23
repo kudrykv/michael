@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 require 'octokit'
-require 'tty-spinner'
-require 'parallel'
 
 require_relative 'octokit_initializer'
 require_relative 'pr_wrapper'

@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'parallel'
+
 require_relative '../../command'
 require_relative '../../models/github/pull_request'
 require_relative '../../models/guard'
@@ -21,7 +23,7 @@ module George
         end
 
         def execute(out: $stdout)
-          list = Parallel.map(repos, in_threads: 5) { |repo| prs.process_repo(repo) }
+          list = get_repos_with_spinner(out)
 
           print_good_prs(out, repos_with_prs(list))
           print_repos_w_no_prs(out, repos_no_prs(list))
@@ -31,6 +33,29 @@ module George
         private
 
         attr_reader :prs, :options, :repos
+
+        def get_repos_with_spinner(out)
+          progress = 0
+          spin = spinner(
+            "[:spinner] :progress/#{repos.length} processing...",
+            output: out
+          )
+
+          spin.update(progress: 0)
+
+          result = Parallel.map(repos, in_threads: 5) do |repo|
+            progress += 1
+            spin.update(progress: progress)
+            spin.spin
+            out = prs.process_repo(repo)
+            spin.spin
+            out
+          end
+
+          spin.stop('done')
+
+          result
+        end
 
         def repos_no_prs(list_all)
           list_all
@@ -45,7 +70,7 @@ module George
         end
 
         def print_good_prs(out, list)
-          out.puts list.join("\n\n")
+          out.puts "\n" + list.join("\n\n")
         end
 
         def print_repos_w_no_prs(out, list)
