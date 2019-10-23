@@ -33,6 +33,7 @@ Gem::Specification.new do |spec|
   spec.require_paths = ['lib']
 
   spec.add_dependency 'octokit', '~> 4.0'
+  spec.add_dependency 'parallel', '~> 1.18.0'
   spec.add_dependency 'pastel', '~> 0.7.2'
   spec.add_dependency 'thor', '~> 0.20.0'
   spec.add_dependency 'tty-box', '~> 0.4.1'

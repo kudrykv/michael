@@ -21,11 +21,11 @@ module George
         end
 
         def execute(out: $stdout)
-          list = prs.search_many(repos)
+          list = Parallel.map(repos, in_threads: 5) { |repo| prs.process_repo(repo) }
 
           print_good_prs(out, repos_with_prs(list))
           print_repos_w_no_prs(out, repos_no_prs(list))
-          print_broken_repos(out, list.select{|item| item[:state] == :failed})
+          print_broken_repos(out, list.select { |item| item[:state] == :failed })
         end
 
         private
