@@ -34,11 +34,13 @@ class PullRequestFormatter
   attr_reader :pastel, :pr
 
   def statuses_in_dots
+    return '-' if pr.statuses.empty?
+
     pr.statuses.map { |status| dot_status[status.state] }.join
   end
 
   def reviews_in_dots
-    return pastel.red('.') unless pr.reviewed? || pr.reviews.any?
+    return pastel.yellow('-') unless pr.reviewed? || pr.reviews.any?
     return pastel.yellow('.') if pr.reviews.empty?
 
     pr.reviews
@@ -104,7 +106,7 @@ class PullRequestFormatter
       failure: pastel.red('x'),
       APPROVED: pastel.green('^'),
       CHANGES_REQUESTED: pastel.red('X'),
-      COMMENTED: '-'
+      COMMENTED: '?'
     }
   end
 end
