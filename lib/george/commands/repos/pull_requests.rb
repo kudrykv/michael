@@ -26,7 +26,7 @@ module George
           list = get_repos_with_spinner(out)
 
           print_good_prs(out, repos_with_prs(list))
-          print_repos_w_no_prs(out, repos_no_prs(list))
+          print_repos_w_no_prs(out, repos_no_prs(list)) if options[:show_empty]
           print_broken_repos(out, list.select { |item| item[:state] == :failed })
         end
 
