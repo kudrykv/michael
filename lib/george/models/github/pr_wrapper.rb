@@ -54,6 +54,15 @@ class PRWrapper
       .select(&:commented?).map(&:author)
   end
 
+  def last_updated_at
+    updates = [pr[:updated_at]]
+
+    updates.concat pr.statuses.map(&:updated_at) unless pr.statuses.nil? || pr.statuses.any?
+    updates.concat pr.reviews.map(&:submitted_at) unless pr.reviews.nil? ||  pr.reviews.any?
+
+    updates.sort.pop
+  end
+
   private
 
   attr_reader :pr

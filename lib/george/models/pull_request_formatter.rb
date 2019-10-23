@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'pastel'
+require 'ruby-duration'
 
 class PullRequestFormatter
   class << self
@@ -32,7 +33,6 @@ class PullRequestFormatter
 
   attr_reader :pastel, :pr
 
-
   def statuses_in_dots
     pr.statuses.map { |status| dot_status[status.state] }.join
   end
@@ -52,7 +52,8 @@ class PullRequestFormatter
       labels_stringified(pr.labels),
       pastel.cyan(pr.author),
       who_req_changes_stringified,
-      who_commented_stringified
+      who_commented_stringified,
+      last_update
     ].reject(&:empty?).join(' ')
   end
 
@@ -74,6 +75,25 @@ class PullRequestFormatter
     return '' if names.empty?
 
     '| ' + pastel.bold('Requested changes: ') << names.map { |name| pastel.underscore(name) }.join(', ')
+  end
+
+  def last_update
+    time_diff = Duration.new(Time.now - pr.last_updated_at)
+    'last update ' + last_update_when(time_diff) + ' ago'
+  end
+
+  def last_update_when(duration)
+    if duration.weeks.positive?
+      pastel.yellow.bold("#{duration.weeks} week(s)")
+    elsif duration.days.positive?
+      pastel.yellow("#{duration.days} day(s)")
+    elsif duration.hours.positive?
+      "#{duration.hours} hour(s)"
+    elsif duration.minutes.positive?
+      "#{duration.minutes} minute(s)"
+    else
+      'seconds'
+    end
   end
 
   def dot_status
