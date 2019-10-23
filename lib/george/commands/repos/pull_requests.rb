@@ -66,6 +66,7 @@ module George
         end
 
         def repos_with_prs(list)
+          list = needs_review(list) if options[:needs_review]
           list = skip_self(list) if options[:skip_self]
           list = hide_approved_or_commented(list) if options[:hide_approved]
           list = select_repos_w_prs(list)
@@ -89,6 +90,14 @@ module George
 
         def select_repos_w_prs(list)
           list.select { |item| item[:state] == :success && item[:prs].any? }
+        end
+
+        def needs_review(list)
+          list.each do |item|
+            item[:prs] = item[:prs].reject do |pr|
+              pr.reviews.any?
+            end
+          end
         end
 
         def print_good_prs(out, list)

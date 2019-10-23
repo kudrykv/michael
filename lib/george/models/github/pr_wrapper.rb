@@ -54,6 +54,15 @@ class PRWrapper
       .select(&:commented?).map(&:author)
   end
 
+  def last_update_head?
+    pr_last_update = pr[:updated_at]
+    review_last_update = pr.reviews&.map(&:submitted_at)&.sort&.pop
+
+    return false unless review_last_update
+
+    pr_last_update > review_last_update
+  end
+
   def last_updated_at
     updates = [pr[:updated_at]]
 
