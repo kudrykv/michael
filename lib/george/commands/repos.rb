@@ -7,7 +7,7 @@ module George
     class Repos < Thor
       namespace :repos
 
-      desc 'edit', 'Command description...'
+      desc 'edit', 'Edit list of repos to follow'
       method_option :help, aliases: '-h', type: :boolean,
                            desc: 'Display usage information'
       def edit(*)
@@ -19,7 +19,7 @@ module George
         end
       end
 
-      desc 'prs', 'Command description...'
+      desc 'prs', 'List open PRs'
       method_option :help, aliases: '-h', type: :boolean,
                            desc: 'Display usage information'
       def prs(*)

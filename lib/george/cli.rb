@@ -21,9 +21,12 @@ module George
     map %w[--version -v] => :version
 
     require_relative 'commands/repos'
-    register George::Commands::Repos, 'repos', 'repos [SUBCOMMAND]', 'Command description...'
+    register George::Commands::Repos,
+             'repos',
+             'repos [SUBCOMMAND]',
+             'Follow repositories and list opened PRs'
 
-    desc 'auth', 'Command description...'
+    desc 'auth', 'Authorize george with github API token'
     method_option :help, aliases: '-h', type: :boolean,
                          desc: 'Display usage information'
 
