@@ -51,9 +51,9 @@ class PullRequestFormatter
     [
       labels_stringified(pr.labels),
       pastel.cyan(pr.author),
+      last_update,
       who_req_changes_stringified,
       who_commented_stringified,
-      last_update
     ].reject(&:empty?).join(' ')
   end
 

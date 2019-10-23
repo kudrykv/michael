@@ -50,7 +50,7 @@ class PRWrapper
 
   def commented_on_pr
     reviews
-      .reject { |review| pr.author == review.author }
+      .reject { |review| author == review.author }
       .select(&:commented?).map(&:author)
   end
 

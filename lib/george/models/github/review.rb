@@ -18,11 +18,11 @@ class Review
   end
 
   def changes_requested?
-    state == 'CHANGES_REQUESTED'
+    state == :CHANGES_REQUESTED
   end
 
   def commented?
-    state == 'COMMENTED'
+    state == :COMMENTED
   end
 
   private
