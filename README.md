@@ -4,16 +4,16 @@
 
 ```
 Commands:
-  george auth                # Authorize george with github API token
-  george help [COMMAND]      # Describe available commands or one specific command
-  george repos [SUBCOMMAND]  # Follow repositories and list opened PRs
-  george version             # george version
+  michael auth                # Authorize michael with github API token
+  michael help [COMMAND]      # Describe available commands or one specific command
+  michael repos [SUBCOMMAND]  # Follow repositories and list opened PRs
+  michael version             # michael version
 
-  george repos edit            # Edit list of repos to follow
-  george repos help [COMMAND]  # Describe subcommands or one specific subcommand
-  george repos prs             # List open PRs
+  michael repos edit            # Edit list of repos to follow
+  michael repos help [COMMAND]  # Describe subcommands or one specific subcommand
+  michael repos prs             # List open PRs
 
-  george repos prs
+  michael repos prs
     Options:
       -h, [--help], [--no-help]                    # Display usage information
       -e, [--show-empty], [--no-show-empty]        # List watched repos that have no open PRs
