@@ -3,7 +3,7 @@
 require 'michael/models/guard'
 require 'michael/models/github/token_validator'
 
-RSpec.describe Guard do
+RSpec.describe Michael::Models::Guard do
   let(:config) { double(:config) }
   let(:validator) { double(:validator) }
 
@@ -19,10 +19,10 @@ RSpec.describe Guard do
 
       expect(validator).to receive(:token_valid?).with('tkn').and_return(true)
 
-      stub_const('Configuration', config)
-      stub_const('TokenValidator', validator)
+      stub_const('Michael::Models::Configuration', config)
+      stub_const('Michael::Models::Github::TokenValidator', validator)
 
-      Guard.new
+      Michael::Models::Guard.new
     end
   end
 
@@ -38,10 +38,10 @@ RSpec.describe Guard do
 
       expect(validator).to receive(:token_valid?).with('tkn').and_return(false)
 
-      stub_const('Configuration', config)
-      stub_const('TokenValidator', validator)
+      stub_const('Michael::Models::Configuration', config)
+      stub_const('Michael::Models::Github::TokenValidator', validator)
 
-      expect { Guard.new }.to raise_error SystemExit
+      expect { Michael::Models::Guard.new }.to raise_error SystemExit
     end
   end
 end

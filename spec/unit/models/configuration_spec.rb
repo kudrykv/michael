@@ -2,11 +2,14 @@
 
 require 'michael/models/configuration.rb'
 
-RSpec.describe Configuration do
+RSpec.describe Michael::Models::Configuration do
   TEST_DIR = './'
   TEST_CONFIG_FILE = 'testconfig'
 
-  subject(:config) { Configuration.new(config_dir: TEST_DIR, config_name: TEST_CONFIG_FILE) }
+  subject(:config) {
+    Michael::Models::Configuration
+      .new(config_dir: TEST_DIR, config_name: TEST_CONFIG_FILE)
+  }
 
   after(:each) do
     config.nuke
