@@ -2,14 +2,20 @@
 
 require_relative 'octokit_initializer'
 
-class User < OctokitInitializer
-  def username
-    me[:login]
-  end
+module Michael
+  module Models
+    module Github
+      class User < OctokitInitializer
+        def username
+          me[:login]
+        end
 
-  private
+        private
 
-  def me
-    @me ||= octokit.user
+        def me
+          @me ||= octokit.user
+        end
+      end
+    end
   end
 end

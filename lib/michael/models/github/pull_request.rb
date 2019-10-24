@@ -7,40 +7,45 @@ require_relative 'pr_wrapper'
 require_relative 'review'
 require_relative 'status'
 
-class PullRequest < OctokitInitializer
-  def process_repo(org_repo, hsh = {})
-    list = search(org_repo, hsh)
+module Michael
+  module Models
+    module Github
+      class PullRequest < OctokitInitializer
+        def process_repo(org_repo, hsh = {})
+          list = search(org_repo, hsh)
 
-    return { repo: org_repo, state: :failed } unless list
+          return {repo: org_repo, state: :failed} unless list
 
-    { repo: org_repo, state: :success, prs: list }
-  end
+          {repo: org_repo, state: :success, prs: list}
+        end
 
-  private
+        private
 
-  def search(org_repo, state: 'open', with_statuses: true, with_reviews: true)
-    octokit.pull_requests(org_repo, state: state).map do |pr|
-      pr = PRWrapper.new(pr)
-      pr.statuses = statuses(org_repo, pr.head_sha) if with_statuses
-      pr.reviews = reviews(org_repo, pr.number) if with_reviews
+        def search(org_repo, state: 'open', with_statuses: true, with_reviews: true)
+          octokit.pull_requests(org_repo, state: state).map do |pr|
+            pr = PRWrapper.new(pr)
+            pr.statuses = statuses(org_repo, pr.head_sha) if with_statuses
+            pr.reviews = reviews(org_repo, pr.number) if with_reviews
 
-      pr
+            pr
+          end
+        rescue Octokit::InvalidRepository
+          false
+        end
+
+        def statuses(org_repo, ref)
+          combined = octokit.combined_status(org_repo, ref)
+          combined[:statuses]&.map { |status| Status.new(status) }
+        end
+
+        def reviews(org_repo, pr_number)
+          octokit
+            .pull_request_reviews(org_repo, pr_number)
+            .map { |review| Review.new(review) }
+            .group_by(&:author).to_a
+            .map { |_author, reviews| reviews.sort_by(&:submitted_at).pop }
+        end
+      end
     end
-  rescue Octokit::InvalidRepository
-    false
   end
-
-  def statuses(org_repo, ref)
-    combined = octokit.combined_status(org_repo, ref)
-    combined[:statuses]&.map { |status| Status.new(status) }
-  end
-
-  def reviews(org_repo, pr_number)
-    octokit
-      .pull_request_reviews(org_repo, pr_number)
-      .map { |review| Review.new(review) }
-      .group_by(&:author).to_a
-      .map { |_author, reviews| reviews.sort_by(&:submitted_at).pop }
-  end
-
 end

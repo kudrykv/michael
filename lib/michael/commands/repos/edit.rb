@@ -6,7 +6,7 @@ require_relative '../../models/guard'
 module Michael
   module Commands
     class Repos
-      class Edit < Guard
+      class Edit < Michael::Models::Guard
         def initialize(options)
           super()
 

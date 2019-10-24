@@ -12,12 +12,12 @@ require_relative '../../models/github/user'
 module Michael
   module Commands
     class Repos
-      class PullRequests < Guard
+      class PullRequests < Models::Guard
         def initialize(options)
           super()
 
-          @prs = PullRequest.new
-          @user = User.new
+          @prs = Michael::Models::Github::PullRequest.new
+          @user = Michael::Models::Github::User.new
           @repos = repos_config.fetch(:repos)
           abort 'No repositories configured' if @repos.nil? || @repos.empty?
 
@@ -72,7 +72,7 @@ module Michael
           list = actionable(list) if options[:actionable]
           list = select_repos_w_prs(list)
 
-          list.map { |item| RepositoryFormatter.new(item[:repo], item[:prs]).pretty }
+          list.map { |item| Michael::Models::RepositoryFormatter.new(item[:repo], item[:prs]).pretty }
         end
 
         def skip_self(list)
