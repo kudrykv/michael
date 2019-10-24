@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'george/commands/repos/pull_requests'
+require 'michael/commands/repos/pull_requests'
 
 RSpec.describe George::Commands::Repos::PullRequests do
   it 'executes `repos prs` command successfully' do

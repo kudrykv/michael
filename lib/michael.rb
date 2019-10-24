@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'george/version'
+require 'michael/version'
 
 module George
   class Error < StandardError; end

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'george/commands/auth'
+require 'michael/commands/auth'
 
 RSpec.describe George::Commands::Auth do
   let(:prompt) { double(:prompt) }

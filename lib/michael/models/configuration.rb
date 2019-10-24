@@ -52,7 +52,7 @@ class Configuration
   end
 
   def default_config_dir
-    "#{ENV['HOME']}/.config/kudrykv/george"
+    "#{ENV['HOME']}/.config/kudrykv/michael"
   end
 
   def default_filename

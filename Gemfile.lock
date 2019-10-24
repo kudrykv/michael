@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    george (0.1.0)
+    michael (0.1.0)
       octokit (~> 4.0)
       parallel (~> 1.18.0)
       pastel (~> 0.7.2)
@@ -162,7 +162,7 @@ PLATFORMS
 
 DEPENDENCIES
   bundler (~> 1.17)
-  george!
+  michael!
   pry
   rake (~> 10.0)
   rspec (~> 3.0)

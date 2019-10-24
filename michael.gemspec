@@ -2,10 +2,10 @@
 
 lib = File.expand_path('lib', __dir__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require 'george/version'
+require 'michael/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = 'george'
+  spec.name          = 'michael'
   spec.license       = 'MIT'
   spec.version       = George::VERSION
   spec.authors       = ['Vitaliy Kudryk']

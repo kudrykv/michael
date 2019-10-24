@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-RSpec.describe '`george repos` command', type: :cli do
-  it 'executes `george help repos` command successfully' do
-    output = `george help repos`
+RSpec.describe '`michael repos` command', type: :cli do
+  it 'executes `michael help repos` command successfully' do
+    output = `michael help repos`
     expected_output = <<~OUT
       Commands:
     OUT

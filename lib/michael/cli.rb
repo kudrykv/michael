@@ -11,7 +11,7 @@ module George
     # Error raised by this runner
     Error = Class.new(StandardError)
 
-    desc 'version', 'george version'
+    desc 'version', 'michael version'
 
     def version
       require_relative 'version'
@@ -26,7 +26,7 @@ module George
              'repos [SUBCOMMAND]',
              'Follow repositories and list opened PRs'
 
-    desc 'auth', 'Authorize george with github API token'
+    desc 'auth', 'Authorize michael with github API token'
     method_option :help, aliases: '-h', type: :boolean,
                          desc: 'Display usage information'
 

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'george/models/configuration.rb'
+require 'michael/models/configuration.rb'
 
 RSpec.describe Configuration do
   TEST_DIR = './'
