@@ -12,6 +12,5 @@ class Guard < Michael::Command
 
     token_valid = TokenValidator.token_valid?(config.fetch(:token))
     abort 'Your token is invalid' unless token_valid
-
   end
 end
