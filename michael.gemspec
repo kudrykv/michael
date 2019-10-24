@@ -11,16 +11,13 @@ Gem::Specification.new do |spec|
   spec.authors       = ['Vitaliy Kudryk']
   spec.email         = ['kudryk.v@gmail.com']
 
-  spec.summary       = 'Update this later'
-  spec.description   = 'Update this later'
+  spec.summary       = 'Operate with github to get PRs'
+  spec.description   = 'Operate with github to get PRs'
+  spec.homepage      = 'https://github.com/kudrykv/michael'
 
-  # Prevent pushing this gem to RubyGems.org. To allow pushes either set the 'allowed_push_host'
-  # to allow pushing to a single host or delete this section to allow pushing to any host.
   if spec.respond_to?(:metadata)
-    spec.metadata['allowed_push_host'] = "Set to 'http://mygemserver.com'"
-  else
-    raise 'RubyGems 2.0 or newer is required to protect against ' \
-      'public gem pushes.'
+    spec.metadata['homepage_uri'] = spec.homepage
+    spec.metadata['source_code_uri'] = spec.homepage
   end
 
   # Specify which files should be added to the gem when it is released.
