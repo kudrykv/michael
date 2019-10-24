@@ -3,7 +3,7 @@
 require 'michael/models/configuration.rb'
 
 RSpec.describe Michael::Models::Configuration do
-  TEST_DIR = './'
+  TEST_DIR = './test'
   TEST_CONFIG_FILE = 'testconfig'
 
   subject(:config) {
