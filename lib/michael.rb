@@ -2,7 +2,7 @@
 
 require 'michael/version'
 
-module George
+module Michael
   class Error < StandardError; end
 
 end

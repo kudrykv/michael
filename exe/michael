@@ -13,11 +13,11 @@ Signal.trap('INT') do
 end
 
 begin
-  George::CLI.start
+  Michael::CLI.start
 rescue TTY::Reader::InputInterrupt
   warn('interrupted')
   exit(1)
-rescue George::CLI::Error => e
+rescue Michael::CLI::Error => e
   puts "ERROR: #{e.message}"
   exit 1
 end

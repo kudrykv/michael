@@ -2,7 +2,7 @@
 
 require 'thor'
 
-module George
+module Michael
   # Handle the application command line parsing
   # and the dispatch to various command objects
   #
@@ -15,13 +15,13 @@ module George
 
     def version
       require_relative 'version'
-      puts "v#{George::VERSION}"
+      puts "v#{Michael::VERSION}"
     end
 
     map %w[--version -v] => :version
 
     require_relative 'commands/repos'
-    register George::Commands::Repos,
+    register Michael::Commands::Repos,
              'repos',
              'repos [SUBCOMMAND]',
              'Follow repositories and list opened PRs'
@@ -35,7 +35,7 @@ module George
         invoke :help, ['auth']
       else
         require_relative 'commands/auth'
-        George::Commands::Auth.new(options).execute
+        Michael::Commands::Auth.new(options).execute
       end
     end
   end

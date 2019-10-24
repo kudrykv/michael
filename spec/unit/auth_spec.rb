@@ -2,7 +2,7 @@
 
 require 'michael/commands/auth'
 
-RSpec.describe George::Commands::Auth do
+RSpec.describe Michael::Commands::Auth do
   let(:prompt) { double(:prompt) }
   let(:validator) { double(:validator) }
 
@@ -25,7 +25,7 @@ RSpec.describe George::Commands::Auth do
       stub_const('TokenValidator', validator)
 
       output = StringIO.new
-      command = George::Commands::Auth.new({})
+      command = Michael::Commands::Auth.new({})
 
       command.execute(out: output)
 
@@ -48,7 +48,7 @@ RSpec.describe George::Commands::Auth do
       stub_const('TokenValidator', validator)
 
       output = StringIO.new
-      command = George::Commands::Auth.new({})
+      command = Michael::Commands::Auth.new({})
 
       command.execute(out: output)
 
@@ -75,7 +75,7 @@ RSpec.describe George::Commands::Auth do
       stub_const('TokenValidator', validator)
 
       output = StringIO.new
-      command = George::Commands::Auth.new({})
+      command = Michael::Commands::Auth.new({})
 
       command.execute(out: output)
 

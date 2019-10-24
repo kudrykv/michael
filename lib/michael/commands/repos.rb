@@ -2,7 +2,7 @@
 
 require 'thor'
 
-module George
+module Michael
   module Commands
     class Repos < Thor
       namespace :repos
@@ -15,7 +15,7 @@ module George
           invoke :help, ['edit']
         else
           require_relative 'repos/edit'
-          George::Commands::Repos::Edit.new(options).execute
+          Michael::Commands::Repos::Edit.new(options).execute
         end
       end
 
@@ -41,7 +41,7 @@ module George
           invoke :help, ['prs']
         else
           require_relative 'repos/pull_requests'
-          George::Commands::Repos::PullRequests.new(options).execute
+          Michael::Commands::Repos::PullRequests.new(options).execute
         end
       end
     end

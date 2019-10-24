@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-RSpec.describe George do
+RSpec.describe Michael do
   it 'has a version number' do
-    expect(George::VERSION).not_to be nil
+    expect(Michael::VERSION).not_to be nil
   end
 end

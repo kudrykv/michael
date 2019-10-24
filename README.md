@@ -1,4 +1,4 @@
-# George
+# Michael
 
 ## Usage
 

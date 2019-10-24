@@ -9,7 +9,7 @@ require_relative '../../models/pull_request_formatter'
 require_relative '../../models/repository_formatter'
 require_relative '../../models/github/user'
 
-module George
+module Michael
   module Commands
     class Repos
       class PullRequests < Guard

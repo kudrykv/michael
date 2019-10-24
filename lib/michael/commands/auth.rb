@@ -5,9 +5,9 @@ require 'tty-prompt'
 require_relative '../command'
 require_relative '../models/github/token_validator'
 
-module George
+module Michael
   module Commands
-    class Auth < George::Command
+    class Auth < Michael::Command
       attr_reader :prompt
 
       def initialize(options)

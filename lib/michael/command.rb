@@ -2,7 +2,7 @@
 
 require 'forwardable'
 
-module George
+module Michael
   class Command
     extend Forwardable
 

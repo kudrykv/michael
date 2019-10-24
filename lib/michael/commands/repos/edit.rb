@@ -3,7 +3,7 @@
 require_relative '../../command'
 require_relative '../../models/guard'
 
-module George
+module Michael
   module Commands
     class Repos
       class Edit < Guard

@@ -3,7 +3,7 @@
 require_relative '../command'
 require_relative 'github/token_validator'
 
-class Guard < George::Command
+class Guard < Michael::Command
   attr_reader :config, :repos_config
 
   def initialize

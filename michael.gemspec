@@ -7,7 +7,7 @@ require 'michael/version'
 Gem::Specification.new do |spec|
   spec.name          = 'michael'
   spec.license       = 'MIT'
-  spec.version       = George::VERSION
+  spec.version       = Michael::VERSION
   spec.authors       = ['Vitaliy Kudryk']
   spec.email         = ['kudryk.v@gmail.com']
 
