@@ -17,11 +17,11 @@ module Michael
 
       def execute(out: $stdout)
         token = read_token
-        unless TokenValidator.token_valid?(token)
+        unless Michael::Models::Github::TokenValidator.token_valid?(token)
           return out.puts 'Specified token is invalid'
         end
 
-        unless TokenValidator.save_token(token)
+        unless Michael::Models::Github::TokenValidator.save_token(token)
           return out.puts 'Failed to save the token'
         end
 

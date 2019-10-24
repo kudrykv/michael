@@ -14,15 +14,13 @@ RSpec.describe Michael::Commands::Auth do
         .and_return('token')
 
       allow(validator).to receive(:token_valid?)
-        .with('token')
-        .and_return(true)
+        .with('token').and_return(true)
 
       allow(validator).to receive(:save_token)
-        .with('token')
-        .and_return(true)
+        .with('token').and_return(true)
 
       stub_const('TTY::Prompt', prompt)
-      stub_const('TokenValidator', validator)
+      stub_const('Michael::Models::Github::TokenValidator', validator)
 
       output = StringIO.new
       command = Michael::Commands::Auth.new({})
@@ -56,7 +54,7 @@ RSpec.describe Michael::Commands::Auth do
     end
   end
 
-  context 'failed to save the token' do
+  context 'something is wrong with disk or IO' do
     it 'should tell it failed to save it' do
       allow(prompt).to receive(:new).and_return(prompt)
       allow(prompt).to receive(:mask)
@@ -72,7 +70,7 @@ RSpec.describe Michael::Commands::Auth do
         .and_return(false)
 
       stub_const('TTY::Prompt', prompt)
-      stub_const('TokenValidator', validator)
+      stub_const('Michael::Models::Github::TokenValidator', validator)
 
       output = StringIO.new
       command = Michael::Commands::Auth.new({})
