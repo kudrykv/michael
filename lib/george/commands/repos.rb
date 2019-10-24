@@ -40,12 +40,8 @@ module George
         if options[:help]
           invoke :help, ['prs']
         else
-          begin
-            require_relative 'repos/pull_requests'
-            George::Commands::Repos::PullRequests.new(options).execute
-          rescue StandardError
-            abort 'interrupted'
-          end
+          require_relative 'repos/pull_requests'
+          George::Commands::Repos::PullRequests.new(options).execute
         end
       end
     end

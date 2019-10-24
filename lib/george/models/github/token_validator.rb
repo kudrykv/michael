@@ -7,8 +7,12 @@ require_relative '../configuration'
 class TokenValidator
   class << self
     def token_valid?(token)
-      Octokit::Client.new(access_token: token).user
-      true
+      scopes = Octokit::Client.new(access_token: token).scopes
+
+      return true if scopes.include?('repo')
+
+      puts 'Token should have `repo` scope'
+      false
     rescue StandardError
       false
     end
