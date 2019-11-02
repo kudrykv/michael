@@ -25,24 +25,6 @@ module Michael
 
     map %w[--version -v] => :version
 
-    desc 'auth2', 'Command description...'
-    method_option :help, aliases: '-h', type: :boolean,
-                         desc: 'Display usage information'
-    def auth2(*)
-      if options[:help]
-        invoke :help, ['auth2']
-      else
-        require_relative 'commands/auth2'
-        config = TTY::Config.new
-        config.append_path(Michael::CONFIG_DIR_ABSOLUTE_PATH)
-        config.filename = Michael::CONFIG_FILENAME
-
-        token = Michael::Services::Token.new(config)
-
-        Michael::Commands::Auth2.new(TTY::Prompt.new, token, options).execute
-      end
-    end
-
     require_relative 'commands/repos'
     register Michael::Commands::Repos,
              'repos',
@@ -58,7 +40,13 @@ module Michael
         invoke :help, ['auth']
       else
         require_relative 'commands/auth'
-        Michael::Commands::Auth.new(options).execute
+        config = TTY::Config.new
+        config.append_path(Michael::CONFIG_DIR_ABSOLUTE_PATH)
+        config.filename = Michael::CONFIG_FILENAME
+
+        token = Michael::Services::Token.new(config)
+
+        Michael::Commands::Auth.new(TTY::Prompt.new, token, options).execute
       end
     end
   end
