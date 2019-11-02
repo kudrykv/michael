@@ -3,7 +3,8 @@
 module Michael
   module Models
     class PullRequest
-      attr_reader :pull_request, :statuses, :reviews, :comments
+      attr_reader :pull_request
+      attr_accessor :statuses, :reviews, :comments
 
       def initialize(pull_request, statuses: nil, reviews: nil)
         @pull_request = pull_request
@@ -12,11 +13,11 @@ module Michael
       end
 
       def number
-        pr[:number]
+        pull_request[:number]
       end
 
       def head_sha
-        pr[:head][:sha]
+        pull_request[:head][:sha]
       end
     end
   end

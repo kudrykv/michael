@@ -4,7 +4,7 @@ require 'thor'
 
 require_relative '../constants'
 require_relative '../services/configuration'
-require_relative '../services/token'
+require_relative '../services/github/token'
 require_relative '../services/github/pull_requests'
 
 module Michael
@@ -20,15 +20,20 @@ module Michael
           invoke :help, ['pr2']
         else
           require_relative 'repos/pr2'
-          ttycfg = TTY::Config.new
-          ttycfg.append_path(Michael::CONFIG_DIR_ABSOLUTE_PATH)
-          ttycfg.filename = Michael::CONFIG_REPOS_FILENAME
+          ttycfgrepos = TTY::Config.new
+          ttycfgrepos.append_path(Michael::CONFIG_DIR_ABSOLUTE_PATH)
+          ttycfgrepos.filename = Michael::CONFIG_REPOS_FILENAME
 
-          cfg = Michael::Services::Configuration.new(ttycfg)
+          ttycfgtkn = TTY::Config.new
+          ttycfgtkn.append_path(Michael::CONFIG_DIR_ABSOLUTE_PATH)
+          ttycfgtkn.filename = Michael::CONFIG_FILENAME
 
-          prs = Michael::Services::Github::PullRequests.new(cfg.fetch(:token))
+          repocfg = Michael::Services::Configuration.new(ttycfgrepos)
+          tkncfg = Michael::Services::Configuration.new(ttycfgtkn)
 
-          Michael::Commands::Repos::Pr2.new(cfg, prs, options).execute
+          prs = Michael::Services::Github::PullRequests.new(tkncfg)
+
+          Michael::Commands::Repos::Pr2.new(repocfg, prs, options).execute
         end
       end
 

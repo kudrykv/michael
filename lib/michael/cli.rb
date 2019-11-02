@@ -5,7 +5,7 @@ require 'tty-prompt'
 require 'tty-config'
 
 require_relative 'constants'
-require_relative 'services/token'
+require_relative 'services/github/token'
 require_relative 'services/configuration'
 
 module Michael
@@ -47,7 +47,7 @@ module Michael
 
         cfg = Michael::Services::Configuration.new(ttycfg)
 
-        token = Michael::Services::Token.new(cfg)
+        token = Michael::Services::Github::Token.new(cfg)
 
         Michael::Commands::Auth.new(TTY::Prompt.new, token, options).execute
       end

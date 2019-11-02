@@ -7,6 +7,10 @@ module Michael
         @review = review
       end
 
+      def author
+        review[:user][:login]
+      end
+
       def submitted_at
         review[:submitted_at]
       end

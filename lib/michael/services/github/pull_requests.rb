@@ -20,11 +20,12 @@ module Michael
         private
 
         def process(org_repo, pull_request)
-          Michael::Models::PullRequest.new(
-            pull_request,
-            statuses: statuses(org_repo, pr.head_sha),
-            reviews: reviews(org_repo, pr.number)
-          )
+          pr = Michael::Models::PullRequest.new(pull_request)
+
+          pr.statuses = statuses(org_repo, pr.head_sha)
+          pr.reviews = reviews(org_repo, pr.number)
+
+          pr
         end
 
         def statuses(org_repo, sha)
@@ -36,7 +37,7 @@ module Michael
         def reviews(org_repo, pr_number)
           octokit
             .pull_request_reviews(org_repo, pr_number)
-            .map { |review| Review.new(review) }
+            .map { |review| Michael::Models::Review.new(review) }
             .group_by(&:author).to_a
             .map { |_author, reviews| reviews.sort_by(&:submitted_at).pop }
         end
