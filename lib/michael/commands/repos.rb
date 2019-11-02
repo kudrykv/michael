@@ -2,6 +2,10 @@
 
 require 'thor'
 
+require_relative '../constants'
+require_relative '../services/configuration'
+require_relative '../services/token'
+
 module Michael
   module Commands
     class Repos < Thor
@@ -15,6 +19,15 @@ module Michael
           invoke :help, ['edit']
         else
           require_relative 'repos/edit'
+          ttycfg = TTY::Config.new
+          ttycfg.append_path(Michael::CONFIG_DIR_ABSOLUTE_PATH)
+          ttycfg.filename = Michael::CONFIG_FILENAME
+
+          cfg = Michael::Services::Configuration.new(ttycfg)
+
+          token = Michael::Services::Token.new(cfg)
+          token.validate(cfg.fetch(:token))
+
           Michael::Commands::Repos::Edit.new(options).execute
         end
       end

@@ -6,6 +6,7 @@ require 'tty-config'
 
 require_relative 'constants'
 require_relative 'services/token'
+require_relative 'services/configuration'
 
 module Michael
   # Handle the application command line parsing
@@ -40,11 +41,13 @@ module Michael
         invoke :help, ['auth']
       else
         require_relative 'commands/auth'
-        config = TTY::Config.new
-        config.append_path(Michael::CONFIG_DIR_ABSOLUTE_PATH)
-        config.filename = Michael::CONFIG_FILENAME
+        ttycfg = TTY::Config.new
+        ttycfg.append_path(Michael::CONFIG_DIR_ABSOLUTE_PATH)
+        ttycfg.filename = Michael::CONFIG_FILENAME
 
-        token = Michael::Services::Token.new(config)
+        cfg = Michael::Services::Configuration.new(ttycfg)
+
+        token = Michael::Services::Token.new(cfg)
 
         Michael::Commands::Auth.new(TTY::Prompt.new, token, options).execute
       end
