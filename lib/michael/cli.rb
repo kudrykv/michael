@@ -20,6 +20,18 @@ module Michael
 
     map %w[--version -v] => :version
 
+    desc 'auth2', 'Command description...'
+    method_option :help, aliases: '-h', type: :boolean,
+                         desc: 'Display usage information'
+    def auth2(*)
+      if options[:help]
+        invoke :help, ['auth2']
+      else
+        require_relative 'commands/auth2'
+        Michael::Commands::Auth2.new(options).execute
+      end
+    end
+
     require_relative 'commands/repos'
     register Michael::Commands::Repos,
              'repos',
