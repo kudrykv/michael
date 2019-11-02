@@ -4,12 +4,13 @@ require 'michael/services/token'
 
 RSpec.describe Michael::Services::Token do
   let(:octokit) { double(:octokit) }
+  let(:exception) { Michael::Error }
   let(:config) { double(:config) }
   let(:access_token) { 'token-for-github' }
 
   context 'validate' do
     it 'should be silent when token is valid' do
-      stub_const('Octokit', octokit)
+      stub_const('Octokit::Client', octokit)
 
       expect(octokit).to receive(:new).with(access_token: :access_token).and_return(octokit)
       expect(octokit).to receive(:scopes).and_return(['repo'])
@@ -20,10 +21,11 @@ RSpec.describe Michael::Services::Token do
     end
 
     it 'should raise error when token is invalid' do
-      stub_const('Octokit', octokit)
+      stub_const('Octokit::Client', octokit)
+      stub_const('Octokit::Unauthorized', exception)
 
       expect(octokit).to receive(:new).with(access_token: :access_token).and_return(octokit)
-      expect(octokit).to receive(:scopes).and_raise(Michael::Error, 'not a token')
+      expect(octokit).to receive(:scopes).and_raise(exception, 'not a token')
 
       tkn = Michael::Services::Token.new(config)
 
@@ -31,7 +33,7 @@ RSpec.describe Michael::Services::Token do
     end
 
     it 'should raise error when scope has no `repo` scope' do
-      stub_const('Octokit', octokit)
+      stub_const('Octokit::Client', octokit)
 
       expect(octokit).to receive(:new).with(access_token: :access_token).and_return(octokit)
       expect(octokit).to receive(:scopes).and_return(['no', 'nopes', 'not here'])

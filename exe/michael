@@ -17,7 +17,7 @@ begin
 rescue TTY::Reader::InputInterrupt
   warn('interrupted')
   exit(1)
-rescue Michael::CLI::Error => e
-  puts "ERROR: #{e.message}"
+rescue Michael::Error => e
+  puts "Error: #{e.message}"
   exit 1
 end

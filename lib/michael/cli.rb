@@ -1,6 +1,11 @@
 # frozen_string_literal: true
 
 require 'thor'
+require 'tty-prompt'
+require 'tty-config'
+
+require_relative 'constants'
+require_relative 'services/token'
 
 module Michael
   # Handle the application command line parsing
@@ -28,7 +33,13 @@ module Michael
         invoke :help, ['auth2']
       else
         require_relative 'commands/auth2'
-        Michael::Commands::Auth2.new(options).execute
+        config = TTY::Config.new
+        config.append_path(Michael::CONFIG_DIR_ABSOLUTE_PATH)
+        config.filename = Michael::CONFIG_FILENAME
+
+        token = Michael::Services::Token.new(config)
+
+        Michael::Commands::Auth2.new(TTY::Prompt.new, token, options).execute
       end
     end
 
