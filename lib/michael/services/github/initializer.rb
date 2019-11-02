@@ -2,6 +2,8 @@
 
 require 'octokit'
 
+require_relative 'token'
+
 module Michael
   module Services
     module Github
