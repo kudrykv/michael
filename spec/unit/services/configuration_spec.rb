@@ -2,6 +2,7 @@
 
 require 'tty-config'
 
+require 'michael'
 require 'michael/services/configuration'
 
 RSpec.describe Michael::Services::Configuration do
@@ -28,6 +29,16 @@ RSpec.describe Michael::Services::Configuration do
       cfg.append(2, to: :list)
       cfg.remove(1, from: :list)
       expect(cfg.fetch(:list)).to contain_exactly(2)
+    end
+
+    it 'should return nil when there is no key' do
+      expect(cfg.fetch(:nothing_in_there)).to be_nil
+    end
+  end
+
+  context 'config is nil' do
+    it 'should throw an exception' do
+      expect { Michael::Services::Configuration.new(nil) }.to raise_error(Michael::Error)
     end
   end
 end

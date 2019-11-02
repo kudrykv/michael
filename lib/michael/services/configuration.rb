@@ -8,7 +8,7 @@ module Michael
   module Services
     class Configuration
       def initialize(config)
-        raise Error('configuration is not initialized') if config.nil?
+        raise Error, 'configuration is not initialized' if config.nil?
 
         @config = config
       end
