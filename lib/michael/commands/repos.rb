@@ -5,11 +5,32 @@ require 'thor'
 require_relative '../constants'
 require_relative '../services/configuration'
 require_relative '../services/token'
+require_relative '../services/github/pull_requests'
 
 module Michael
   module Commands
     class Repos < Thor
       namespace :repos
+
+      desc 'pr2', 'Command description...'
+      method_option :help, aliases: '-h', type: :boolean,
+                           desc: 'Display usage information'
+      def pr2(*)
+        if options[:help]
+          invoke :help, ['pr2']
+        else
+          require_relative 'repos/pr2'
+          ttycfg = TTY::Config.new
+          ttycfg.append_path(Michael::CONFIG_DIR_ABSOLUTE_PATH)
+          ttycfg.filename = Michael::CONFIG_REPOS_FILENAME
+
+          cfg = Michael::Services::Configuration.new(ttycfg)
+
+          prs = Michael::Services::Github::PullRequests.new(cfg.fetch(:token))
+
+          Michael::Commands::Repos::Pr2.new(cfg, prs, options).execute
+        end
+      end
 
       desc 'edit', 'Edit list of repos to follow'
       method_option :help, aliases: '-h', type: :boolean,
