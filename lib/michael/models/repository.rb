@@ -10,6 +10,12 @@ module Michael
         @broken = broken
         @prs = prs
       end
+
+      def ==(other)
+        org_name == other.org_name &&
+          broken == other.broken &&
+          prs == other.prs
+      end
     end
   end
 end
