@@ -3,17 +3,19 @@
 module Michael
   module Models
     class Repository
-      attr_reader :org_name, :broken, :prs
+      attr_reader :org_name, :prs
 
-      def initialize(org_name, broken: false, prs: [])
+      def initialize(org_name, prs: nil)
         @org_name = org_name
-        @broken = broken
         @prs = prs
+      end
+
+      def broken?
+        prs.nil?
       end
 
       def ==(other)
         org_name == other.org_name &&
-          broken == other.broken &&
           prs == other.prs
       end
     end

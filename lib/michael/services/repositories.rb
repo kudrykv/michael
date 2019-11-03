@@ -18,7 +18,7 @@ module Michael
         repos = Parallel.map(org_repos_list, in_threads: threads) do |org_repo|
           queue << org_repo unless queue.nil?
           list = prs.search(org_repo, params)
-          Michael::Models::Repository.new(org_repo, broken: list.nil?, prs: list)
+          Michael::Models::Repository.new(org_repo, prs: list)
         end
 
         queue&.close
