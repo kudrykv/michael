@@ -6,6 +6,7 @@ require_relative '../constants'
 require_relative '../services/configuration'
 require_relative '../services/github/token'
 require_relative '../services/github/pull_requests'
+require_relative '../services/repositories'
 
 module Michael
   module Commands
@@ -32,8 +33,9 @@ module Michael
           tkncfg = Michael::Services::Configuration.new(ttycfgtkn)
 
           prs = Michael::Services::Github::PullRequests.new(tkncfg)
+          repos = Michael::Services::Repositories.new(prs)
 
-          Michael::Commands::Repos::Pr2.new(repocfg, prs, options).execute
+          Michael::Commands::Repos::Pr2.new(repocfg, repos, options).execute
         end
       end
 
