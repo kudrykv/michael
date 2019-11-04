@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'pastel'
+
 module Michael
   module Models
     class Status
@@ -15,9 +17,26 @@ module Michael
         status[:updated_at]
       end
 
+      def dot
+        dot_status[state]
+      end
+
       private
 
       attr_reader :status
+
+      def dot_status
+        @dot_status ||= {
+          success: pastel.green('+'),
+          pending: pastel.yellow('.'),
+          error: pastel.red('x'),
+          failure: pastel.red('x')
+        }
+      end
+
+      def pastel
+        @pastel ||= Pastel.new
+      end
     end
   end
 end

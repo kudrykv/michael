@@ -29,9 +29,8 @@ module Michael
         end
 
         def statuses(org_repo, sha)
-          octokit
-            .combined_status(org_repo, sha)
-            .map { |s| Michael::Models::Status.new(s) }
+          statuses = octokit.combined_status(org_repo, sha)[:statuses]
+          statuses.map { |s| Michael::Models::Status.new(s) }
         end
 
         def reviews(org_repo, pr_number)
