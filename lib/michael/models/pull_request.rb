@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'pastel'
+
 module Michael
   module Models
     class PullRequest
@@ -16,8 +18,25 @@ module Michael
         pull_request[:number]
       end
 
+      def title
+        pull_request[:title]
+      end
+
       def head_sha
         pull_request[:head][:sha]
+      end
+
+      def pretty_print
+        [
+          pastel.bold("\##{number}"),
+          title
+        ].join(' ')
+      end
+
+      private
+
+      def pastel
+        @pastel ||= Pastel.new
       end
     end
   end
