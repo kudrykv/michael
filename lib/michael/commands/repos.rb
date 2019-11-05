@@ -36,7 +36,8 @@ module Michael
           token = Michael::Services::Github::Token.new(cfg)
           token.validate(cfg.fetch(:token))
 
-          Michael::Commands::Repos::Edit.new(Michael::CONFIG_REPOS_FILENAME, repocfg, TTY::Editor, options).execute
+          repos_filepath = Michael::CONFIG_DIR_ABSOLUTE_PATH + '/' + Michael::CONFIG_REPOS_FILENAME + '.yml'
+          Michael::Commands::Repos::Edit.new(repos_filepath, repocfg, TTY::Editor, options).execute
         end
       end
 
