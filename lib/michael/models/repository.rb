@@ -27,6 +27,7 @@ module Michael
 
       def pretty_print
         return pastel.black.on_red(org_name) if broken?
+        return org_name if prs.none?
 
         [
           pastel.bold(org_name + ':'),

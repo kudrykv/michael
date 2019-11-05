@@ -25,10 +25,8 @@ module Michael
           list = repos.pull_requests(list, q)
           waiting.join
 
-          puts [
-            filter_repos_w_prs(list).map!(&:pretty_print).join("\n\n"),
-            get_broken(list)
-          ].reject(&:nil?).join("\n\n")
+          puts [filter_repos_w_prs(list), get_empty(list), get_broken(list)]
+            .reject(&:nil?).join("\n\n")
         end
 
         private
@@ -41,7 +39,7 @@ module Michael
             r.prs.select! { |pr| pr.actionable?(users.user.username) } if options[:actionable]
           end
 
-          list.select(&:has_prs?)
+          list.select(&:has_prs?).map!(&:pretty_print).join("\n\n")
         end
 
         def get_broken(list)
@@ -49,6 +47,15 @@ module Michael
           return nil if broken.none?
 
           'Broken repos: ' + broken.map(&:pretty_print).join(', ')
+        end
+
+        def get_empty(list)
+          return nil unless options[:show_empty]
+
+          empty = list.reject(&:has_prs?)
+          return nil if empty.none?
+
+          'No PRs: ' + empty.map(&:pretty_print).join(', ')
         end
 
         def print_waiting(queue)
