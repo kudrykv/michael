@@ -50,7 +50,8 @@ module Michael
           labels.empty? ? nil : pastel.bold.yellow("[#{labels.join(', ')}]"),
           pastel.cyan(author),
           pretty_last_update(Time.now, last_updated_at),
-          requested_changes
+          requested_changes,
+          commented
         ].reject(&:nil?).join(' ')
       end
 
@@ -75,6 +76,13 @@ module Michael
         return nil if rc.empty?
 
         '| ' + pastel.bold('Requested changes: ') + rc.map { |n| pastel.underscore(n) }.join(', ')
+      end
+
+      def commented
+        rc = reviews.select(&:commented?).map(&:author)
+        return nil if rc.empty?
+
+        '| Commented: ' + rc.join(', ')
       end
 
       def pretty_last_update(bigger, smaller)
