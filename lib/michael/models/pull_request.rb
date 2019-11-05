@@ -45,11 +45,12 @@ module Michael
         [
           pastel.bold("\##{number}"),
           statuses_in_dots,
+          reviews_in_dots,
           title,
           labels.empty? ? nil : pastel.bold.yellow("[#{labels.join(', ')}]"),
           pastel.cyan(author),
-          'last update',
-          pretty_last_update(Time.now, last_updated_at) + ' ago'
+          pretty_last_update(Time.now, last_updated_at),
+          requested_changes
         ].reject(&:nil?).join(' ')
       end
 
@@ -62,10 +63,24 @@ module Michael
         statuses.map(&:dot).join
       end
 
+      def reviews_in_dots
+        return nil if reviews.nil?
+        return '-' if reviews.empty?
+
+        reviews.map(&:dot).join
+      end
+
+      def requested_changes
+        rc = reviews.map(&:changes_requested?)
+        return nil if rc.empty?
+
+        '| ' + pastel.bold('Requested changes: ') + rc.map { |n| pastel.underscore(n) }.join(', ')
+      end
+
       def pretty_last_update(bigger, smaller)
         duration = Duration.new(bigger-smaller)
 
-        if duration.weeks.positive?
+        wh = if duration.weeks.positive?
           pastel.yellow.bold("#{duration.weeks} week(s)")
         elsif duration.days.positive?
           pastel.yellow("#{duration.days} day(s)")
@@ -75,7 +90,9 @@ module Michael
           "#{duration.minutes} minute(s)"
         else
           'seconds'
-        end
+             end
+
+        "last update #{wh} ago"
       end
 
       def pastel
