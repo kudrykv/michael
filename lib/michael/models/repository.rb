@@ -26,12 +26,18 @@ module Michael
       end
 
       def pretty_print
-        return org_name if broken?
+        return pastel.black.on_red(org_name) if broken?
 
         [
-          Pastel.new.bold(org_name + ':'),
+          pastel.bold(org_name + ':'),
           prs.map(&:pretty_print).join("\n")
         ].join("\n")
+      end
+
+      private
+
+      def pastel
+        @pastel ||= Pastel.new
       end
     end
   end

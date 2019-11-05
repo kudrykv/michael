@@ -25,8 +25,35 @@ module Michael
         pull_request[:user][:login]
       end
 
+      def author?(name)
+        author == name
+      end
+
       def head_sha
         pull_request[:head][:sha]
+      end
+
+      def approved?
+        reviews.any? && reviews.all?(&:approved?)
+      end
+
+      def needs_review?
+        pull_request[:requested_reviewers].any? || pull_request[:requested_teams].any?
+      end
+
+      def actionable?(name)
+        return false if author?(name)
+        return true if reviews.map(&:author).none?(name)
+
+        last_update_head?
+      end
+
+      def last_update_head?
+        return true if reviews.nil? || reviews.empty?
+
+        updated_at = pull_request[:updated_at]
+        reviewed_at = reviews.map(&:submitted_at).sort.pop
+        updated_at > reviewed_at
       end
 
       def labels
@@ -66,7 +93,8 @@ module Michael
 
       def reviews_in_dots
         return nil if reviews.nil?
-        return '-' if reviews.empty?
+        return '-' if !needs_review? && reviews.none?
+        return pastel.yellow('.') if reviews.empty?
 
         reviews.map(&:dot).join
       end

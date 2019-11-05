@@ -13,7 +13,7 @@ module Michael
           octokit
             .pull_requests(org_repo, state: state)
             .map { |pr| process(org_repo, pr) }
-        rescue Octokit::InvalidRepository
+        rescue Octokit::InvalidRepository, Octokit::NotFound
           nil
         end
 

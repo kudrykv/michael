@@ -19,15 +19,37 @@ module Michael
 
         def execute
           q = Queue.new
-          print_waiting(q)
+          waiting = print_waiting(q)
           list = config.fetch(:repos)
 
-          list = repos.pull_requests(list, q).select(&:has_prs?)
+          list = repos.pull_requests(list, q)
+          waiting.join
 
-          puts list.map(&:pretty_print).join("\n\n")
+          puts [
+            filter_repos_w_prs(list).map!(&:pretty_print).join("\n\n"),
+            get_broken(list)
+          ].reject(&:nil?).join("\n\n")
         end
 
         private
+
+        def filter_repos_w_prs(list)
+          list.each do |r|
+            r.prs.reject! { |pr| pr.author?(users.user.username) } if options[:skip_self]
+            r.prs.reject!(&:approved?) if options[:hide_approved]
+            r.prs.select!(&:needs_review?) if options[:needs_review]
+            r.prs.select! { |pr| pr.actionable?(users.user.username) } if options[:actionable]
+          end
+
+          list.select(&:has_prs?)
+        end
+
+        def get_broken(list)
+          broken = list.select(&:broken?)
+          return nil if broken.none?
+
+          'Broken repos: ' + broken.map(&:pretty_print).join(', ')
+        end
 
         def print_waiting(queue)
           Thread.new do
