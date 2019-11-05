@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'thor'
+require 'tty-editor'
 
 require_relative '../constants'
 require_relative '../services/configuration'
@@ -25,12 +26,17 @@ module Michael
           ttycfg.append_path(Michael::CONFIG_DIR_ABSOLUTE_PATH)
           ttycfg.filename = Michael::CONFIG_FILENAME
 
+          ttycfgrepos = TTY::Config.new
+          ttycfgrepos.append_path(Michael::CONFIG_DIR_ABSOLUTE_PATH)
+          ttycfgrepos.filename = Michael::CONFIG_REPOS_FILENAME
+
           cfg = Michael::Services::Configuration.new(ttycfg)
+          repocfg = Michael::Services::Configuration.new(ttycfgrepos)
 
           token = Michael::Services::Github::Token.new(cfg)
           token.validate(cfg.fetch(:token))
 
-          Michael::Commands::Repos::Edit.new(options).execute
+          Michael::Commands::Repos::Edit.new(Michael::CONFIG_REPOS_FILENAME, repocfg, TTY::Editor, options).execute
         end
       end
 

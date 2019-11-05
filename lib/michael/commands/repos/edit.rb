@@ -1,24 +1,28 @@
 # frozen_string_literal: true
 
-require_relative '../../command'
-require_relative '../../models/guard'
-
 module Michael
   module Commands
     class Repos
-      class Edit < Michael::Models::Guard
-        def initialize(options)
+      class Edit
+        def initialize(repos_filepath, cfg, editor, options)
           super()
 
+          @repos_filepath = repos_filepath
+          @cfg = cfg
+          @editor = editor
           @options = options
         end
 
-        def execute(input: $stdin, output: $stdout)
-          list = repos_config.fetch(:repos)
-          repos_config.append('org/repo', to: :repos) if list.nil? || list.empty?
+        def execute
+          list = cfg.fetch(:repos)
+          cfg.append('org/repo', to: :repos) if list.nil? || list.empty?
 
-          editor.open(repos_config.config_file_path)
+          editor.open(repos_filepath)
         end
+
+        private
+
+        attr_reader :repos_filepath, :cfg, :editor
       end
     end
   end
