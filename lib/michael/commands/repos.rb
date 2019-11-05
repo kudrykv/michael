@@ -27,7 +27,7 @@ module Michael
 
           cfg = Michael::Services::Configuration.new(ttycfg)
 
-          token = Michael::Services::Token.new(cfg)
+          token = Michael::Services::Github::Token.new(cfg)
           token.validate(cfg.fetch(:token))
 
           Michael::Commands::Repos::Edit.new(options).execute

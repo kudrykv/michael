@@ -3,11 +3,6 @@
 require 'parallel'
 
 require_relative '../../command'
-require_relative '../../models/github/pull_request'
-require_relative '../../models/guard'
-require_relative '../../models/pull_request_formatter'
-require_relative '../../models/repository_formatter'
-require_relative '../../models/github/user'
 
 module Michael
   module Commands
