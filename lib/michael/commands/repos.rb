@@ -13,32 +13,6 @@ module Michael
     class Repos < Thor
       namespace :repos
 
-      desc 'pr2', 'Command description...'
-      method_option :help, aliases: '-h', type: :boolean,
-                           desc: 'Display usage information'
-      def pr2(*)
-        if options[:help]
-          invoke :help, ['pr2']
-        else
-          require_relative 'repos/pr2'
-          ttycfgrepos = TTY::Config.new
-          ttycfgrepos.append_path(Michael::CONFIG_DIR_ABSOLUTE_PATH)
-          ttycfgrepos.filename = Michael::CONFIG_REPOS_FILENAME
-
-          ttycfgtkn = TTY::Config.new
-          ttycfgtkn.append_path(Michael::CONFIG_DIR_ABSOLUTE_PATH)
-          ttycfgtkn.filename = Michael::CONFIG_FILENAME
-
-          repocfg = Michael::Services::Configuration.new(ttycfgrepos)
-          tkncfg = Michael::Services::Configuration.new(ttycfgtkn)
-
-          prs = Michael::Services::Github::PullRequests.new(tkncfg)
-          repos = Michael::Services::Repositories.new(prs)
-
-          Michael::Commands::Repos::Pr2.new(repocfg, repos, options).execute
-        end
-      end
-
       desc 'edit', 'Edit list of repos to follow'
       method_option :help, aliases: '-h', type: :boolean,
                            desc: 'Display usage information'
@@ -82,7 +56,20 @@ module Michael
           invoke :help, ['prs']
         else
           require_relative 'repos/pull_requests'
-          Michael::Commands::Repos::PullRequests.new(options).execute
+          ttycfgrepos = TTY::Config.new
+          ttycfgrepos.append_path(Michael::CONFIG_DIR_ABSOLUTE_PATH)
+          ttycfgrepos.filename = Michael::CONFIG_REPOS_FILENAME
+
+          ttycfgtkn = TTY::Config.new
+          ttycfgtkn.append_path(Michael::CONFIG_DIR_ABSOLUTE_PATH)
+          ttycfgtkn.filename = Michael::CONFIG_FILENAME
+
+          repocfg = Michael::Services::Configuration.new(ttycfgrepos)
+          tkncfg = Michael::Services::Configuration.new(ttycfgtkn)
+
+          prs = Michael::Services::Github::PullRequests.new(tkncfg)
+          repos = Michael::Services::Repositories.new(prs)
+          Michael::Commands::Repos::PullRequests.new(repocfg, repos, options).execute
         end
       end
     end
