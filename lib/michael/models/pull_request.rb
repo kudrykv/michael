@@ -71,7 +71,7 @@ module Michael
       end
 
       def requested_changes
-        rc = reviews.map(&:changes_requested?)
+        rc = reviews.select(&:changes_requested?).map(&:author)
         return nil if rc.empty?
 
         '| ' + pastel.bold('Requested changes: ') + rc.map { |n| pastel.underscore(n) }.join(', ')
