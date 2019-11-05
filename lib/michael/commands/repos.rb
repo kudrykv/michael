@@ -3,11 +3,12 @@
 require 'thor'
 require 'tty-editor'
 
-require_relative '../constants'
-require_relative '../services/configuration'
-require_relative '../services/github/token'
-require_relative '../services/github/pull_requests'
-require_relative '../services/repositories'
+require 'michael/constants'
+require 'michael/services/github/users'
+require 'michael/services/configuration'
+require 'michael/services/github/token'
+require 'michael/services/github/pull_requests'
+require 'michael/services/repositories'
 
 module Michael
   module Commands
@@ -75,8 +76,9 @@ module Michael
           tkncfg = Michael::Services::Configuration.new(ttycfgtkn)
 
           prs = Michael::Services::Github::PullRequests.new(tkncfg)
+          users = Michael::Services::Github::Users.new(tkncfg)
           repos = Michael::Services::Repositories.new(prs)
-          Michael::Commands::Repos::PullRequests.new(repocfg, repos, options).execute
+          Michael::Commands::Repos::PullRequests.new(repocfg, users, repos, options).execute
         end
       end
     end
