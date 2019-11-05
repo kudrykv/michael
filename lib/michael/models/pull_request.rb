@@ -25,12 +25,12 @@ module Michael
         pull_request[:user][:login]
       end
 
-      def author?(name)
-        author == name
-      end
-
       def head_sha
         pull_request[:head][:sha]
+      end
+
+      def labels
+        pull_request[:labels].map(&:name)
       end
 
       def approved?
@@ -41,31 +41,15 @@ module Michael
         pull_request[:requested_reviewers].any? || pull_request[:requested_teams].any?
       end
 
+      def author?(name)
+        author == name
+      end
+
       def actionable?(name)
         return false if author?(name)
         return true if reviews.map(&:author).none?(name)
 
         last_update_head?
-      end
-
-      def last_update_head?
-        return true if reviews.nil? || reviews.empty?
-
-        updated_at = pull_request[:updated_at]
-        reviewed_at = reviews.map(&:submitted_at).sort.pop
-        updated_at > reviewed_at
-      end
-
-      def labels
-        pull_request[:labels].map(&:name)
-      end
-
-      def last_updated_at
-        updates = [pull_request[:updated_at]]
-        updates.concat(statuses.map(&:updated_at)) if !statuses.nil? && statuses.any?
-        updates.concat(reviews.map(&:submitted_at)) if !reviews.nil? && reviews.any?
-
-        updates.sort.pop
       end
 
       def pretty_print
@@ -83,6 +67,14 @@ module Michael
       end
 
       private
+
+      def last_updated_at
+        updates = [pull_request[:updated_at]]
+        updates.concat(statuses.map(&:updated_at)) if !statuses.nil? && statuses.any?
+        updates.concat(reviews.map(&:submitted_at)) if !reviews.nil? && reviews.any?
+
+        updates.sort.pop
+      end
 
       def statuses_in_dots
         return nil if statuses.nil?
@@ -129,6 +121,14 @@ module Michael
              end
 
         "last update #{wh} ago"
+      end
+
+      def last_update_head?
+        return true if reviews.nil? || reviews.empty?
+
+        updated_at = pull_request[:updated_at]
+        reviewed_at = reviews.map(&:submitted_at).sort.pop
+        updated_at > reviewed_at
       end
 
       def pastel
