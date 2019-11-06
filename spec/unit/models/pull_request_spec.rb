@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
-require_relative '../../../lib/michael/models/pull_request'
+require 'michael/models/pull_request'
+require 'michael/models/review'
 
 RSpec.describe Michael::Models::PullRequest do
   Label = Struct.new(:name)
@@ -9,7 +10,7 @@ RSpec.describe Michael::Models::PullRequest do
   let(:sha) { 'sha' }
   let(:author) { 'deadbeef' }
   let(:title) { 'that is a great title' }
-  let(:labels) { ['shiny', 'label'] }
+  let(:labels) { %w[shiny label] }
 
   let(:raw_pr) do
     {
@@ -52,9 +53,103 @@ RSpec.describe Michael::Models::PullRequest do
       end
     end
 
-    context :labels do
-      it 'should return list of labels' do
-        expect(pr.labels).to contain_exactly(*labels)
+  end
+
+  context :labels do
+    it 'should return list of labels' do
+      expect(pr.labels).to contain_exactly(*labels)
+    end
+  end
+
+  context :approved? do
+    context 'when there are no reviews' do
+      it 'should tell pr is not approved' do
+        expect(pr.approved?).to be_falsey
+      end
+    end
+
+    context 'when reviews have no approved review' do
+      it 'should tell pr is not approved' do
+        pr.reviews = [Michael::Models::Review.new(state: 'COMMENTED')]
+
+        expect(pr.approved?).to be_falsey
+      end
+    end
+
+    context 'when review has some of all approved reviews' do
+      it 'should should tell pr is not approved' do
+        pr.reviews = [
+          Michael::Models::Review.new(state: 'APPROVED'),
+          Michael::Models::Review.new(state: 'COMMENTED')
+        ]
+
+        expect(pr.approved?).to be_falsey
+      end
+    end
+
+    context 'when all reviews are approving' do
+      it 'should should tell pr is approved' do
+        pr.reviews = [Michael::Models::Review.new(state: 'APPROVED')]
+
+        expect(pr.approved?).to be_truthy
+      end
+    end
+  end
+  
+  context :needs_review? do
+    context 'when there are no attached requested reviewers or teams' do
+      let(:raw_pr) { { requested_reviewers: [], requested_teams: [] } }
+      let(:pr) { Michael::Models::PullRequest.new(raw_pr) }
+
+      it 'should say no need for review' do
+        expect(pr.needs_review?).to be_falsey
+      end
+    end
+
+    context 'when there is a reviewer' do
+      let(:raw_pr) do
+        {
+          requested_reviewers: [{ todo: true }],
+          requested_teams: []
+        }
+      end
+      let(:pr) { Michael::Models::PullRequest.new(raw_pr) }
+
+      it 'should say the review is needed' do
+        expect(pr.needs_review?).to be_truthy
+      end
+    end
+
+    context 'when team was requested for a review' do
+      let(:raw_pr) do
+        {
+          requested_reviewers: [],
+          requested_teams: [{ todo: true }]
+        }
+      end
+      let(:pr) { Michael::Models::PullRequest.new(raw_pr) }
+
+      it 'should should say the review is needed' do
+        expect(pr.needs_review?).to be_truthy
+      end
+    end
+  end
+
+  context :author? do
+    let(:raw_pr) do
+      { user: { login: author } }
+    end
+    let(:pr) { Michael::Models::PullRequest.new(raw_pr) }
+
+    context 'when the author name matches passed' do
+      it 'should confirm the user is the author' do
+        expect(pr.author?(author)).to be_truthy
+      end
+    end
+
+    context 'when the author name mismatch passed' do
+      it 'should deny the user is the author' do
+        expect(pr.author?(author + author)).to be_falsey
       end
     end
   end
