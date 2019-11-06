@@ -34,6 +34,8 @@ module Michael
       end
 
       def approved?
+        return false if reviews.nil?
+
         reviews.any? && reviews.all?(&:approved?)
       end
 

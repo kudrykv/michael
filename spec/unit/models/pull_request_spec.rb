@@ -63,8 +63,18 @@ RSpec.describe Michael::Models::PullRequest do
 
   context :approved? do
     context 'when there are no reviews' do
-      it 'should tell pr is not approved' do
-        expect(pr.approved?).to be_falsey
+      context 'reviews is nil' do
+        it 'should tell pr is not approved' do
+          expect(pr.approved?).to be_falsey
+        end
+      end
+
+      context 'reviews is empty array' do
+        it 'should tell pr is not approved' do
+          pr.reviews = []
+
+          expect(pr.approved?).to be_falsey
+        end
       end
     end
 
