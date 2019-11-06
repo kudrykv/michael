@@ -136,9 +136,11 @@ RSpec.describe Michael::Models::PullRequest do
   end
 
   context :author? do
+    let(:moment) { Time.now }
     let(:raw_pr) do
       { user: { login: author } }
     end
+
     let(:pr) { Michael::Models::PullRequest.new(raw_pr) }
 
     context 'when the author name matches passed' do
@@ -150,6 +152,54 @@ RSpec.describe Michael::Models::PullRequest do
     context 'when the author name mismatch passed' do
       it 'should deny the user is the author' do
         expect(pr.author?(author + author)).to be_falsey
+      end
+    end
+  end
+
+  context :actionable? do
+    let(:moment) { Time.now }
+    let(:ago) { moment - 60 }
+    let(:after) { moment + 60 }
+    let(:alice) { 'alice' }
+    let(:bob) { 'bob' }
+    let(:raw_pr) { { user: { login: author }, updated_at: moment } }
+    let(:pr) do
+      r = Michael::Models::PullRequest.new(raw_pr)
+      r.reviews = [Michael::Models::Review.new(state: 'COMMENTED', user: { login: alice }, submitted_at: ago)]
+
+      r
+    end
+
+    context 'when PR author name matches current user' do
+      it 'should be considered as non-actionable' do
+        expect(pr.actionable?(author)).to be_falsey
+      end
+    end
+
+    context 'when PR has no reviews from the current user' do
+      it 'should be considered as actionable' do
+        expect(pr.actionable?(bob)).to be_truthy
+      end
+    end
+
+    context 'when PR has a review from the current user' do
+      context 'when the last update has been to the head' do
+        it 'should be considered as actionable' do
+          expect(pr.actionable?(alice)).to be_truthy
+        end
+      end
+
+      context 'when the last update has been from the review' do
+        let(:pr) do
+          r = Michael::Models::PullRequest.new(raw_pr)
+          r.reviews = [Michael::Models::Review.new(state: 'COMMENTED', user: { login: alice }, submitted_at: after)]
+
+          r
+        end
+
+        it 'should be concidered as non-actionable' do
+          expect(pr.actionable?(alice)).to be_falsey
+        end
       end
     end
   end

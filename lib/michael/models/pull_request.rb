@@ -124,8 +124,6 @@ module Michael
       end
 
       def last_update_head?
-        return true if reviews.nil? || reviews.empty?
-
         updated_at = pull_request[:updated_at]
         reviewed_at = reviews.map(&:submitted_at).sort.pop
         updated_at > reviewed_at
