@@ -5,8 +5,9 @@ require 'pastel'
 module Michael
   module Models
     class Status
-      def initialize(status)
+      def initialize(status, pastel_params: {})
         @status = status
+        @pastel_params = pastel_params
       end
 
       def state
@@ -35,7 +36,7 @@ module Michael
       end
 
       def pastel
-        @pastel ||= Pastel.new
+        @pastel ||= Pastel.new(@pastel_params)
       end
     end
   end
