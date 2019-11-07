@@ -24,4 +24,20 @@ RSpec.describe Michael::Models::Repository do
       expect(repo.broken?).to be_falsey
     end
   end
+
+  context :has_prs? do
+    context 'when the repo is broken' do
+      it 'should say the repo has no prs' do
+        repo = R.new(org_name)
+        expect(repo.has_prs?).to be_falsey
+      end
+    end
+
+    context 'when there are no prs' do
+      it 'should should say the repo has no prs' do
+        repo = R.new(org_name, prs: [])
+        expect(repo.has_prs?).to be_falsey
+      end
+    end
+  end
 end

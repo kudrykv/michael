@@ -25,7 +25,7 @@ RSpec.describe Michael::Services::Github::PullRequests do
   end
 
   let(:org_repo_statuses) do
-    []
+    {statuses: []}
   end
 
   let(:org_repo_reviews) do

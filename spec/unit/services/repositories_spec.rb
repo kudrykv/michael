@@ -18,7 +18,7 @@ RSpec.describe Michael::Services::Repositories do
   context :pull_requests do
     let(:repolist) { ['org/repo'] }
     let(:resplist) { [[]] }
-    let(:resprepo) { Michael::Models::Repository.new('org/repo', broken:  false, prs: []) }
+    let(:resprepo) { Michael::Models::Repository.new('org/repo', prs: []) }
     let(:params) { {} }
     let(:repos) { Michael::Services::Repositories.new(prs) }
 
