@@ -2,8 +2,6 @@
 
 require 'parallel'
 
-require_relative '../../command'
-
 module Michael
   module Commands
     class Repos

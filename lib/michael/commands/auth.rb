@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require_relative '../command'
-
 module Michael
   module Commands
     class Auth
